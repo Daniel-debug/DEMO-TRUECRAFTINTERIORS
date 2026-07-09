@@ -1180,7 +1180,7 @@
       background-image: url('https://images.unsplash.com/photo-1741394546743-2d64519ba0d3?fm=jpg&q=80&w=1400&fit=crop');
       background-size: cover;
       background-position: center;
-      clip-path: inset(0 50% 0 0);
+      clip-path: inset(0 0 0 50%);
     }
 
     .compare .handle {
@@ -2765,7 +2765,7 @@
     const handle = document.getElementById('compareHandle');
     function setCompare(pct) {
       pct = Math.max(4, Math.min(96, pct));
-      afterLayer.style.clipPath = `inset(0 ${100 - pct}% 0 0)`;
+      afterLayer.style.clipPath = `inset(0 0 0 ${pct}%)`;
       handle.style.left = pct + '%';
     }
     function compareFromClientX(clientX) {
