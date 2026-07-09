@@ -175,10 +175,12 @@
     color:var(--orange);margin-bottom:20px;
   }
   .eyebrow::before{content:"";width:22px;height:2px;background:var(--orange);}
+  .hero-eyebrow-mobile{display:none;}
   .hero h1{
     font-size:clamp(2.6rem, 5.4vw, 4.4rem);
     color:var(--paper);
     margin-bottom:22px;
+    text-shadow:0 6px 24px rgba(0,0,0,0.6), 0 2px 6px rgba(0,0,0,0.45);
   }
   .hero h1 em{
     font-style:normal;color:var(--orange);
@@ -203,9 +205,11 @@
     color:#9E9B94;text-transform:uppercase;letter-spacing:0.06em;margin-top:6px;
   }
 
+  .hero-copy{position:relative;z-index:2;}
+
   /* CSS drywall panel illustration */
   .panel-art{
-    position:relative;height:420px;
+    position:relative;height:420px;z-index:1;
   }
   .sheet{
     position:absolute;
@@ -296,6 +300,7 @@
   .services{background:var(--charcoal);color:var(--paper);}
   .services .section-head p{color:#B7B4AC;}
   .services .section-head .eyebrow{color:var(--orange);}
+  .services .section-head h2{color:var(--white);}
   .service-list{display:flex;flex-direction:column;}
   .service-row{
     display:grid;grid-template-columns:110px 1fr 200px;gap:32px;align-items:center;
@@ -340,8 +345,8 @@
   }
 
   /* ---------- TESTIMONIALS ---------- */
-  .testimonials{background:var(--plaster);}
-  .t-wrap{display:grid;grid-template-columns:0.7fr 1.3fr;gap:56px;align-items:center;}
+  .testimonials{background:var(--plaster);padding-bottom:48px;}
+  .t-wrap{display:grid;grid-template-columns:0.7fr 1.3fr;gap:56px;align-items:start;}
   .t-score{
     font-family:'Big Shoulders',sans-serif;font-weight:900;font-size:5.2rem;
     line-height:0.85;color:var(--charcoal);
@@ -369,6 +374,11 @@
   .hours-card{background:rgba(255,255,255,0.06);padding:24px;border-radius:2px;margin-top:8px;}
   .hours-card .row{display:flex;justify-content:space-between;padding:9px 0;border-top:1px solid rgba(255,255,255,0.14);font-family:'IBM Plex Mono',monospace;font-size:0.85rem;}
   .hours-card .row:first-child{border-top:none;}
+  .map-card{
+    margin-top:16px;border-radius:2px;overflow:hidden;
+    border:1px solid rgba(255,255,255,0.14);
+    filter:grayscale(0.15) contrast(1.05);
+  }
 
   .form-card{
     background:var(--paper);color:var(--charcoal);
@@ -524,7 +534,7 @@
   .compare .side-label.after-label{right:12px;}
 
   /* ---------- FAQ ---------- */
-  .faq{background:var(--plaster);}
+  .faq{background:var(--plaster);padding-top:48px;}
   .faq-list{max-width:760px;}
   .faq-item{border-top:1px solid var(--line);}
   .faq-list .faq-item:last-child{border-bottom:1px solid var(--line);}
@@ -551,7 +561,6 @@
     max-height:0;overflow:hidden;transition:max-height .3s ease;
   }
   .faq-a p{padding:0 4px 22px;color:var(--concrete-dark);max-width:64ch;font-size:0.96rem;}
-  .faq-item.open .faq-a{max-height:220px;}
 
   /* ---------- STICKY MOBILE BAR ---------- */
   .mobile-bar{
@@ -668,18 +677,28 @@
   }
   .tt-play-overlay{
     position:absolute;inset:0;display:grid;place-items:center;
-    background:rgba(10,10,9,0.28);
+    background:rgba(10,10,9,0.32);
     transition:opacity .2s ease, background .2s ease;
     pointer-events:none;
   }
   .tt-play-tri{
-    width:54px;height:54px;border-radius:50%;
-    background:rgba(255,122,26,0.94);color:var(--white);
-    display:grid;place-items:center;font-size:1.05rem;
-    padding-left:4px;
-    box-shadow:0 10px 24px rgba(0,0,0,0.4);
+    width:58px;height:58px;border-radius:50%;
+    background:var(--orange);color:var(--white);
+    display:grid;place-items:center;
+    box-shadow:0 12px 28px rgba(0,0,0,0.45), 0 0 0 6px rgba(255,255,255,0.08);
+    transition:transform .2s ease;
   }
-  .tt-video.playing .tt-play-overlay{opacity:0;background:transparent;}
+  .tt-video:hover .tt-play-tri{transform:scale(1.06);}
+  .tt-play-tri .icon-play{margin-left:3px;}
+  .tt-play-tri .icon-pause{display:none;}
+  .tt-video.playing .tt-play-overlay{
+    opacity:0;background:transparent;
+  }
+  .tt-video.playing:hover .tt-play-overlay{
+    opacity:1;background:rgba(10,10,9,0.22);
+  }
+  .tt-video.playing:hover .tt-play-tri .icon-play{display:none;}
+  .tt-video.playing:hover .tt-play-tri .icon-pause{display:block;}
   .tt-mute{
     position:absolute;top:10px;right:10px;z-index:2;
     width:32px;height:32px;border-radius:50%;
@@ -689,9 +708,10 @@
   }
   .tt-video.playing .tt-mute{opacity:1;}
   .tt-mute svg{width:15px;height:15px;}
-  .tt-mute .icon-unmuted{display:none;}
-  .tt-video.unmuted .tt-mute .icon-muted{display:none;}
-  .tt-video.unmuted .tt-mute .icon-unmuted{display:block;}
+  /* sound is on by default when a clip plays; the muted icon only shows once tapped */
+  .tt-mute .icon-muted{display:none;}
+  .tt-video.muted .tt-mute .icon-unmuted{display:none;}
+  .tt-video.muted .tt-mute .icon-muted{display:block;}
 
   /* ---------- RESPONSIVE ---------- */
   @media (max-width:980px){
@@ -701,6 +721,8 @@
     .loc-badge{display:none;}
     .hero-grid{grid-template-columns:1fr;}
     .panel-art{height:280px;order:-1;}
+    .hero-eyebrow-mobile{display:inline-flex;order:-2;margin-bottom:14px;}
+    .hero-eyebrow-desktop{display:none;}
     .about-grid{grid-template-columns:1fr;gap:36px;}
     .service-row{grid-template-columns:60px 1fr;}
     .service-row .btn{grid-column:2;justify-self:start;}
@@ -741,6 +763,11 @@
     .service-num{font-size:2.5rem;}
     .lang-toast-btns .lo-label{font-size:0.9rem;}
     .t-score{font-size:3.8rem;}
+    .testimonials{padding-bottom:20px;}
+    .faq{padding-top:24px;}
+    .t-wrap{gap:22px;}
+    .t-card{padding:22px;}
+    .section-head{margin-bottom:34px;}
   }
   @media (max-width:380px){
     .logo-text{display:none;} /* keep just the mark on very narrow phones */
@@ -823,8 +850,9 @@
 <section class="hero" id="top">
   <div class="grain"></div>
   <div class="hero-grid">
-    <div>
-      <span class="eyebrow" data-i18n="hero.eyebrow">Chicagoland &middot; Residential &amp; Commercial</span>
+    <span class="eyebrow hero-eyebrow-mobile" data-i18n="hero.eyebrow">Chicagoland &middot; Residential &amp; Commercial</span>
+    <div class="hero-copy">
+      <span class="eyebrow hero-eyebrow-desktop" data-i18n="hero.eyebrow">Chicagoland &middot; Residential &amp; Commercial</span>
       <h1 data-i18n="hero.h1">Walls done<br>right, <em>the<br>first time.</em></h1>
       <p class="lead" data-i18n="hero.lead">Family-owned drywall installation, taping and repair. Tight seams, clean job sites, and a crew that shows up when we say we will &mdash; backed by a 1-year warranty.</p>
       <div class="hero-ctas">
@@ -986,7 +1014,12 @@
           <svg class="icon-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5 6 9H2v6h4l5 4V5Z"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
           <svg class="icon-unmuted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5 6 9H2v6h4l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
         </button>
-        <div class="tt-play-overlay"><span class="tt-play-tri">▶</span></div>
+        <div class="tt-play-overlay">
+          <span class="tt-play-tri">
+            <svg class="icon-play" viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M8 5.14v13.72c0 .78.84 1.27 1.52.87l11.4-6.86a1 1 0 0 0 0-1.72L9.52 4.27C8.84 3.87 8 4.36 8 5.14Z"/></svg>
+            <svg class="icon-pause" viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
+          </span>
+        </div>
       </div>
       <div class="tiktok-card tt-video reveal" data-tt-video>
         <video class="tt-video-el" muted loop playsinline preload="metadata" poster="https://res.cloudinary.com/dui0ludm/video/upload/so_0,q_auto,f_jpg/2-mov_gtz8mo.jpg">
@@ -996,7 +1029,12 @@
           <svg class="icon-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5 6 9H2v6h4l5 4V5Z"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
           <svg class="icon-unmuted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5 6 9H2v6h4l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
         </button>
-        <div class="tt-play-overlay"><span class="tt-play-tri">▶</span></div>
+        <div class="tt-play-overlay">
+          <span class="tt-play-tri">
+            <svg class="icon-play" viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M8 5.14v13.72c0 .78.84 1.27 1.52.87l11.4-6.86a1 1 0 0 0 0-1.72L9.52 4.27C8.84 3.87 8 4.36 8 5.14Z"/></svg>
+            <svg class="icon-pause" viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
+          </span>
+        </div>
       </div>
       <div class="tiktok-card tt-video reveal" data-tt-video>
         <video class="tt-video-el" muted loop playsinline preload="metadata" poster="https://res.cloudinary.com/dui0ludm/video/upload/so_0,q_auto,f_jpg/4-mov_h6s7vf.jpg">
@@ -1006,7 +1044,12 @@
           <svg class="icon-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5 6 9H2v6h4l5 4V5Z"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
           <svg class="icon-unmuted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5 6 9H2v6h4l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
         </button>
-        <div class="tt-play-overlay"><span class="tt-play-tri">▶</span></div>
+        <div class="tt-play-overlay">
+          <span class="tt-play-tri">
+            <svg class="icon-play" viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M8 5.14v13.72c0 .78.84 1.27 1.52.87l11.4-6.86a1 1 0 0 0 0-1.72L9.52 4.27C8.84 3.87 8 4.36 8 5.14Z"/></svg>
+            <svg class="icon-pause" viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
+          </span>
+        </div>
       </div>
       <div class="tiktok-card tt-video reveal" data-tt-video>
         <video class="tt-video-el" muted loop playsinline preload="metadata" poster="https://res.cloudinary.com/dui0ludm/video/upload/so_0,q_auto,f_jpg/5-mov_stjgza.jpg">
@@ -1016,7 +1059,12 @@
           <svg class="icon-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5 6 9H2v6h4l5 4V5Z"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
           <svg class="icon-unmuted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5 6 9H2v6h4l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
         </button>
-        <div class="tt-play-overlay"><span class="tt-play-tri">▶</span></div>
+        <div class="tt-play-overlay">
+          <span class="tt-play-tri">
+            <svg class="icon-play" viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M8 5.14v13.72c0 .78.84 1.27 1.52.87l11.4-6.86a1 1 0 0 0 0-1.72L9.52 4.27C8.84 3.87 8 4.36 8 5.14Z"/></svg>
+            <svg class="icon-pause" viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
+          </span>
+        </div>
       </div>
     </div>
     <div class="gallery-note" data-i18n="tiktok.note">→ Reproductor propio con los videos reales &mdash; sube los archivos a la carpeta /videos y quedan conectados.</div>
@@ -1109,6 +1157,14 @@
           <div class="row"><span data-i18n="cta.hours1">Monday &ndash; Saturday</span><span class="mono">8:00 AM &ndash; 5:00 PM</span></div>
           <div class="row"><span data-i18n="cta.hours2">Sunday</span><span class="mono" data-i18n="cta.closed">Closed</span></div>
           <div class="row"><span data-i18n="cta.phone">Phone</span><span class="mono"><a href="tel:17083284951">(708) 328-4951</a></span></div>
+        </div>
+        <div class="map-card">
+          <iframe
+            src="https://maps.google.com/maps?q=Chicago,IL&z=10&output=embed"
+            width="100%" height="220" style="border:0;display:block;"
+            allowfullscreen="" loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            title="True Craft Interiors service area map"></iframe>
         </div>
       </div>
 
@@ -1362,6 +1418,10 @@
     const langToggle = document.getElementById('langToggle');
     if(langToggle) langToggle.setAttribute('data-active', lang);
     showTestimonial(tIndex, true);
+    // the open FAQ answer just got new (possibly longer/shorter) text — resize it
+    if(typeof faqItems !== 'undefined'){
+      requestAnimationFrame(() => faqItems.forEach(setFaqHeight));
+    }
   }
 
   // language toast (subtle, non-blocking)
@@ -1436,14 +1496,28 @@
   compareEl.addEventListener('touchstart', (e) => compareFromClientX(e.touches[0].clientX), {passive:true});
   compareEl.addEventListener('touchmove', (e) => compareFromClientX(e.touches[0].clientX), {passive:true});
 
-  // faq accordion
-  document.querySelectorAll('.faq-item').forEach(item => {
+  // faq accordion — height is measured from real content, so it never clips
+  // (fixes the layout breaking when Spanish text runs longer than English)
+  function setFaqHeight(item){
+    const a = item.querySelector('.faq-a');
+    a.style.maxHeight = item.classList.contains('open') ? (a.scrollHeight + 'px') : '0px';
+  }
+  const faqItems = document.querySelectorAll('.faq-item');
+  faqItems.forEach(item => {
     const q = item.querySelector('.faq-q');
     q.addEventListener('click', () => {
       const isOpen = item.classList.contains('open');
-      document.querySelectorAll('.faq-item').forEach(i => { i.classList.remove('open'); i.querySelector('.faq-q').setAttribute('aria-expanded','false'); });
+      faqItems.forEach(i => { i.classList.remove('open'); i.querySelector('.faq-q').setAttribute('aria-expanded','false'); setFaqHeight(i); });
       if(!isOpen){ item.classList.add('open'); q.setAttribute('aria-expanded','true'); }
+      setFaqHeight(item);
     });
+    setFaqHeight(item); // initial state (first item starts open)
+  });
+  // recalc if the viewport is resized (text reflows to more/fewer lines)
+  let faqResizeTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(faqResizeTimer);
+    faqResizeTimer = setTimeout(() => faqItems.forEach(setFaqHeight), 150);
   });
 
   // mobile nav
@@ -1486,8 +1560,8 @@
     note.style.fontWeight = '600';
   });
 
-  // custom TikTok-style video cards: click to play/pause, tap the speaker to unmute,
-  // and only one clip plays at a time
+  // custom TikTok-style video cards: click to play/pause (starts with sound on),
+  // tap the speaker to mute, and only one clip plays at a time
   const videoCards = document.querySelectorAll('[data-tt-video]');
   videoCards.forEach(card => {
     const video = card.querySelector('.tt-video-el');
@@ -1501,9 +1575,12 @@
             const ov = other.querySelector('.tt-video-el');
             ov.pause();
             ov.currentTime = 0;
-            other.classList.remove('playing','unmuted');
+            ov.muted = true;
+            other.classList.remove('playing','muted');
           }
         });
+        video.muted = false; // sound on by default when a clip starts
+        card.classList.remove('muted');
         video.play().catch(() => {});
         card.classList.add('playing');
       } else {
@@ -1515,7 +1592,7 @@
     muteBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       video.muted = !video.muted;
-      card.classList.toggle('unmuted', !video.muted);
+      card.classList.toggle('muted', video.muted);
     });
 
     video.addEventListener('ended', () => { card.classList.remove('playing'); });
