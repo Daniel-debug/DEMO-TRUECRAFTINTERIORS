@@ -590,6 +590,32 @@
       color: var(--charcoal-soft);
       margin-bottom: 16px;
       font-size: 1rem;
+      line-height: 1.7;
+    }
+
+    .about-mission {
+      margin-top: 24px;
+      padding-left: 18px;
+      border-left: 4px solid var(--orange);
+    }
+
+    .about-mission .label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--charcoal);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .about-mission p {
+      margin: 0;
+      color: var(--charcoal);
+      font-size: 1.06rem;
+      font-weight: 700;
+      line-height: 1.65;
     }
 
     .checklist {
@@ -627,29 +653,6 @@
       height: 8px;
       background: var(--orange);
       border-radius: 50%;
-    }
-
-    .reason-grid {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 12px;
-      margin-top: 42px;
-    }
-
-    .reason-item {
-      border: 1px solid var(--line);
-      background: var(--white);
-      padding: 16px 14px;
-      min-height: 78px;
-      display: grid;
-      align-content: center;
-      color: var(--charcoal);
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.78rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      overflow-wrap: anywhere;
     }
 
     /* ---------- SERVICES ---------- */
@@ -777,13 +780,6 @@
       font-family: 'IBM Plex Mono', monospace;
       font-size: 0.7rem;
       text-align: center;
-    }
-
-    .gallery-note {
-      margin-top: 20px;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.78rem;
-      color: var(--concrete-dark);
     }
 
     /* ---------- TESTIMONIALS ---------- */
@@ -1916,10 +1912,6 @@
         gap: 36px;
       }
 
-      .reason-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-
       .service-row {
         grid-template-columns: 60px 1fr;
       }
@@ -2138,17 +2130,6 @@
         line-height: 1.4;
       }
 
-      .reason-grid {
-        grid-template-columns: 1fr;
-        gap: 10px;
-        margin-top: 28px;
-      }
-
-      .reason-item {
-        min-height: 0;
-        padding: 14px;
-      }
-
       .section-head {
         margin-bottom: 34px;
       }
@@ -2317,7 +2298,7 @@
         <div class="sheet s2">
           <div class="seamline"></div>
         </div>
-        <div class="tape-badge" data-i18n="hero.badge">Taped &amp; Finished</div>
+        <div class="tape-badge" data-i18n="hero.badge">Built Right. Finished Perfectly.</div>
       </div>
     </div>
   </section>
@@ -2364,49 +2345,43 @@
           <h2 style="font-size:clamp(2rem,3.4vw,2.7rem);margin-bottom:20px;" data-i18n="about.h2">Craftsmanship shaped
             by family experience</h2>
           <div class="about-copy">
-            <p data-i18n="about.p1">Growing up in a construction family, our father introduced us to the trade at a
-              young age by taking us to job sites. Working alongside him taught us hard work, attention to detail and
-              doing every job the right way.</p>
-            <p data-i18n="about.p2">Those early experiences built the foundation for True Craft Interiors. Today, our
-              licensed and fully insured crew brings over 25 years of experience, plus family drywall knowledge dating
-              back more than 40 years, to drywall, taping, repair, framing, painting and FRP work.</p>
-            <p data-i18n="about.p3">After years in the industry and building trust with local builders, we started our
-              own brand to provide a more personalized experience and deliver the quality every homeowner deserves.</p>
-            <p data-i18n="about.p4">Our purpose is to transform spaces through high-quality craftsmanship, functionality,
-              design and attention to detail while becoming a trusted leader known for integrity, service and lasting
-              client relationships.</p>
+            <p data-i18n="about.p1">True Craft Interiors grew from a construction family. Our father introduced us to
+              job sites at a young age, where we learned discipline, clean work habits and why every detail matters
+              before the final coat.</p>
+            <p data-i18n="about.p2">That foundation became the way we work today: licensed, fully insured and backed by
+              over 25 years of hands-on experience, more than 40 years of family drywall knowledge and a 1-year
+              workmanship warranty.</p>
+            <p data-i18n="about.p3">What motivates us most is seeing each client's project come to life with a finish
+              that improves the space and exceeds expectations.</p>
+          </div>
+          <div class="about-mission">
+            <span class="label" data-i18n="about.missionLabel">Our Mission</span>
+            <p data-i18n="about.mission">To transform spaces with durable craftsmanship, functional finishes, honest
+              communication and results that feel finished correctly from the inside out.</p>
+          </div>
+          <div class="about-mission">
+            <span class="label" data-i18n="about.visionLabel">Our Vision</span>
+            <p data-i18n="about.vision">To become a trusted leader in carpentry and remodeling, recognized for
+              craftsmanship, integrity, outstanding service and lasting client relationships.</p>
           </div>
         </div>
         <div class="reveal">
           <ul class="checklist">
-            <li><span class="mark"></span> <span data-i18n="about.c1">Integrity, transparency and accountability</span>
+            <li><span class="mark"></span> <span data-i18n="about.c1">Clean, detailed finishes using trusted
+                materials</span>
             </li>
-            <li><span class="mark"></span> <span data-i18n="about.c2">Quality craftsmanship with attention to detail</span>
+            <li><span class="mark"></span> <span data-i18n="about.c2">Integrity, respect and honest communication</span>
             </li>
-            <li><span class="mark"></span> <span data-i18n="about.c3">Reliable schedules, honest communication and
-                clean work areas</span></li>
-            <li><span class="mark"></span> <span data-i18n="about.c4">Licensed, fully insured and backed by a 1-year
-                workmanship warranty</span></li>
-            <li><span class="mark"></span> <span data-i18n="about.c5">Customer satisfaction, respect and excellence on
-                every project</span></li>
-            <li><span class="mark"></span> <span data-i18n="about.c6">Personalized service that helps clients see their
-                project come to life</span></li>
-            <li><span class="mark"></span> <span data-i18n="about.c7">New ideas, proven techniques and quality
+            <li><span class="mark"></span> <span data-i18n="about.c3">Reliable schedules, prompt finishes and clean work
+                areas</span></li>
+            <li><span class="mark"></span> <span data-i18n="about.c4">Customer satisfaction, excellence and lasting
+                relationships</span></li>
+            <li><span class="mark"></span> <span data-i18n="about.c5">New ideas, proven techniques and quality
                 materials</span></li>
-            <li><span class="mark"></span> <span data-i18n="about.c8">Teamwork with homeowners, builders and remodeling
-                partners</span></li>
+            <li><span class="mark"></span> <span data-i18n="about.c6">Residential, commercial and remodeling partner
+                work</span></li>
           </ul>
         </div>
-      </div>
-      <div class="reason-grid reveal">
-        <div class="reason-item" data-i18n="reasons.1">Experience</div>
-        <div class="reason-item" data-i18n="reasons.2">Warranty</div>
-        <div class="reason-item" data-i18n="reasons.3">Quality</div>
-        <div class="reason-item" data-i18n="reasons.4">Personalized attention</div>
-        <div class="reason-item" data-i18n="reasons.5">Speed</div>
-        <div class="reason-item" data-i18n="reasons.6">Professionalism</div>
-        <div class="reason-item" data-i18n="reasons.7">Quality materials</div>
-        <div class="reason-item" data-i18n="reasons.8">Punctuality</div>
       </div>
     </div>
   </section>
@@ -2496,7 +2471,7 @@
       <div class="section-head reveal">
         <span class="eyebrow" style="color:var(--orange-dark);" data-i18n="gallery.eyebrow">Recent Work</span>
         <h2 data-i18n="gallery.h2">Project gallery</h2>
-        <p data-i18n="gallery.p">Project photos and before/after examples can be added here as the business approves real images.</p>
+        <p data-i18n="gallery.p">Drywall, repair and finish details for residential, commercial and remodeling projects.</p>
       </div>
       <div class="gallery-grid">
         <div class="compare reveal" id="compareSlider">
@@ -2525,9 +2500,6 @@
           <span class="tag" data-i18n="gallery.tag4">Water Damage &middot; Repair</span>
         </div>
       </div>
-      <div class="gallery-note" data-i18n="gallery.note">→ Reemplaza el slider con fotos reales tomadas desde el mismo
-        ángulo &mdash; arrastra el control naranja para comparar. Es el elemento que más convierte en un sitio de
-        trades.</div>
     </div>
   </section>
 
@@ -2540,8 +2512,7 @@
         <div>
           <span class="eyebrow" style="color:var(--orange-dark);" data-i18n="tiktok.eyebrow">On Location</span>
           <h2 data-i18n="tiktok.h2">Watch us work</h2>
-          <p data-i18n="tiktok.p">Real job sites, real time-lapses &mdash; no stock footage. Follow along for the
-            day-to-day.</p>
+          <p data-i18n="tiktok.p">Real job site clips from True Craft Interiors projects.</p>
         </div>
         <div class="social-panel">
           <p class="social-copy" data-i18n="social.copy">See more project updates on social media.</p>
@@ -2639,7 +2610,6 @@
           </div>
         </div>
       </div>
-      <div class="gallery-note" data-i18n="tiktok.note">&rarr; Custom video player with Cloudinary-hosted project clips.</div>
     </div>
   </section>
 
@@ -2934,12 +2904,12 @@
         'hero.badge': 'Built Right. Finished Perfectly.',
         'trust.1': 'Serving Chicagoland since 2010', 'trust.2': 'Free quotes within 1&ndash;2 business days', 'trust.3': 'Subcontracting available for remodelers', 'trust.4': 'Licensed &amp; fully insured', 'trust.5': 'Bilingual crews, English &amp; Spanish', 'trust.6': '1-year workmanship warranty',
         'about.eyebrow': 'Who We Are', 'about.h2': 'Craftsmanship shaped by family experience',
-        'about.p1': 'Growing up in a construction family, our father introduced us to the trade at a young age by taking us to job sites. Working alongside him taught us hard work, attention to detail and doing every job the right way.',
-        'about.p2': 'Those early experiences built the foundation for True Craft Interiors. Today, our licensed and fully insured crew brings over 25 years of experience, plus family drywall knowledge dating back more than 40 years, to drywall, taping, repair, framing, painting and FRP work.',
-        'about.p3': 'After years in the industry and building trust with local builders, we started our own brand to provide a more personalized experience and deliver the quality every homeowner deserves.',
-        'about.p4': 'Our purpose is to transform spaces through high-quality craftsmanship, functionality, design and attention to detail while becoming a trusted leader known for integrity, service and lasting client relationships.',
-        'about.c1': 'Integrity, transparency and accountability', 'about.c2': 'Quality craftsmanship with attention to detail', 'about.c3': 'Reliable schedules, honest communication and clean work areas', 'about.c4': 'Licensed, fully insured and backed by a 1-year workmanship warranty', 'about.c5': 'Customer satisfaction, respect and excellence on every project', 'about.c6': 'Personalized service that helps clients see their project come to life', 'about.c7': 'New ideas, proven techniques and quality materials', 'about.c8': 'Teamwork with homeowners, builders and remodeling partners',
-        'reasons.1': 'Experience', 'reasons.2': 'Warranty', 'reasons.3': 'Quality', 'reasons.4': 'Personalized attention', 'reasons.5': 'Speed', 'reasons.6': 'Professionalism', 'reasons.7': 'Quality materials', 'reasons.8': 'Punctuality',
+        'about.p1': 'True Craft Interiors grew from a construction family. Our father introduced us to job sites at a young age, where we learned discipline, clean work habits and why every detail matters before the final coat.',
+        'about.p2': 'That foundation became the way we work today: licensed, fully insured and backed by over 25 years of hands-on experience, more than 40 years of family drywall knowledge and a 1-year workmanship warranty.',
+        'about.p3': 'What motivates us most is seeing each client&rsquo;s project come to life with a finish that improves the space and exceeds expectations.',
+        'about.missionLabel': 'Our Mission', 'about.mission': 'To transform spaces with durable craftsmanship, functional finishes, honest communication and results that feel finished correctly from the inside out.',
+        'about.visionLabel': 'Our Vision', 'about.vision': 'To become a trusted leader in carpentry and remodeling, recognized for craftsmanship, integrity, outstanding service and lasting client relationships.',
+        'about.c1': 'Clean, detailed finishes using trusted materials', 'about.c2': 'Integrity, respect and honest communication', 'about.c3': 'Reliable schedules, prompt finishes and clean work areas', 'about.c4': 'Customer satisfaction, excellence and lasting relationships', 'about.c5': 'New ideas, proven techniques and quality materials', 'about.c6': 'Residential, commercial and remodeling partner work',
         'services.eyebrow': 'What We Do', 'services.h2': 'From bare studs<br>to the final coat', 'services.p': 'One dependable crew for drywall, taping, repairs, framing, painting and commercial FRP wall protection.',
         'services.t1': 'Drywall Installation', 'services.d1': 'We glue and screw drywall, keep joints tight for better taping, use trusted materials like USG, CertainTeed and Gold Bond, and can handle new builds, remodels, soundproofing and custom drywall features.',
         'services.t2': 'Taping &amp; Finishing', 'services.d2': 'Tight joint taping, Level 1-5 finishes, automatic taping tools, clean hand finishes, exceptional patchwork and trusted products like TapeTech, USG, ProForm and Trim-Tex.',
@@ -2948,16 +2918,14 @@
         'services.t5': 'Painting', 'services.d5': 'Painting preparation and finish work that turns a smooth drywall surface into a clean, ready-to-enjoy room.',
         'services.t6': 'FRP Installation', 'services.d6': 'Commercial wall protection with moisture-resistant FRP panels, sanitary finishes, substrate prep, paneling and trim.',
         'services.cta': 'Get Quote',
-        'gallery.eyebrow': 'Recent Work', 'gallery.h2': 'Project gallery', 'gallery.p': 'Project photos and before/after examples can be added here as the business approves real images.',
+        'gallery.eyebrow': 'Recent Work', 'gallery.h2': 'Project gallery', 'gallery.p': 'Drywall, repair and finish details for residential, commercial and remodeling projects.',
         'gallery.before': 'Before', 'gallery.after': 'After', 'gallery.addPhoto': 'ADD<br>PHOTO',
         'gallery.tag1': 'Office &middot; Commercial', 'gallery.tag2': 'Living Room &middot; Taping', 'gallery.tag3': 'Stairwell &middot; Installation', 'gallery.tag4': 'Water Damage &middot; Repair',
-        'gallery.note': '&rarr; Add approved same-angle before/after photos here for the strongest project proof.',
         'tiktok.eyebrow': 'On Location', 'tiktok.h2': 'Watch us work', 'tiktok.p': 'Real job site clips from True Craft Interiors projects.',
         'social.copy': 'See more project updates on social media.',
         'social.facebook': 'Follow on Facebook',
         'tiktok.follow': 'Follow on TikTok',
         'tiktok.v1': 'Drywall work in progress', 'tiktok.v2': 'Taping and finishing close-up', 'tiktok.v3': 'Repair and finish details',
-        'tiktok.note': '&rarr; Custom video player with Cloudinary-hosted project clips.',
         'testi.eyebrow': 'Reviews', 'testi.of5': 'review preview', 'testi.based': '<strong>Pending: replace names, reviews and photos with real client data before publishing.</strong>',
         'faq.eyebrow': 'Common Questions', 'faq.h2': 'Before you call',
         'faq.q1': 'How fast can I get a quote?', 'faq.a1': 'Free estimates are usually prepared within 1&ndash;2 business days. We can review the project in person or start from clear photos.',
@@ -2992,12 +2960,12 @@
         'hero.badge': 'Construido correctamente. Terminado a la perfección.',
         'trust.1': 'Sirviendo Chicagoland desde 2010', 'trust.2': 'Cotizaciones gratis en 1&ndash;2 días hábiles', 'trust.3': 'Disponibles como subcontratistas para remodelaciones', 'trust.4': 'Licenciados y totalmente asegurados', 'trust.5': 'Equipos bilingües, inglés y español', 'trust.6': 'Garantía de 1 año en mano de obra',
         'about.eyebrow': 'Quiénes Somos', 'about.h2': 'Calidad artesanal formada por experiencia familiar',
-        'about.p1': 'Creciendo en una familia de construcción, nuestro padre nos introdujo al oficio desde jóvenes llevándonos a obras. Trabajar junto a él nos enseñó el valor del trabajo duro, la atención al detalle y hacer cada trabajo de la manera correcta.',
-        'about.p2': 'Esas primeras experiencias formaron la base de True Craft Interiors. Hoy nuestro equipo licenciado y totalmente asegurado aporta más de 25 años de experiencia, junto con conocimiento familiar en drywall de más de 40 años, en drywall, cinta, reparación, framing, pintura e instalación de FRP.',
-        'about.p3': 'Después de años en la industria y de ganarnos la confianza de constructores locales, iniciamos nuestra propia marca para ofrecer una experiencia más personalizada y entregar la calidad que cada propietario merece.',
-        'about.p4': 'Nuestro propósito es transformar espacios mediante calidad artesanal, funcionalidad, diseño y atención al detalle, mientras crecemos como una empresa confiable reconocida por integridad, servicio y relaciones duraderas con cada cliente.',
-        'about.c1': 'Integridad, transparencia y responsabilidad', 'about.c2': 'Calidad artesanal con atención al detalle', 'about.c3': 'Horarios confiables, comunicación honesta y áreas de trabajo limpias', 'about.c4': 'Licenciados, totalmente asegurados y respaldados por garantía de 1 año en mano de obra', 'about.c5': 'Satisfacción del cliente, respeto y excelencia en cada proyecto', 'about.c6': 'Atención personalizada para ver cada proyecto hacerse realidad', 'about.c7': 'Ideas nuevas, técnicas probadas y materiales de calidad', 'about.c8': 'Trabajo en equipo con propietarios, constructores y socios de remodelación',
-        'reasons.1': 'Experiencia', 'reasons.2': 'Garantía', 'reasons.3': 'Calidad', 'reasons.4': 'Atención personalizada', 'reasons.5': 'Rapidez', 'reasons.6': 'Profesionalismo', 'reasons.7': 'Materiales de calidad', 'reasons.8': 'Puntualidad',
+        'about.p1': 'True Craft Interiors nació de una familia de construcción. Nuestro padre nos llevó a obras desde jóvenes, donde aprendimos disciplina, hábitos de trabajo limpios y por qué cada detalle importa antes del acabado final.',
+        'about.p2': 'Esa base define la forma en que trabajamos hoy: licenciados, totalmente asegurados y respaldados por más de 25 años de experiencia práctica, más de 40 años de conocimiento familiar en drywall y garantía de 1 año en mano de obra.',
+        'about.p3': 'Lo que más nos motiva es ver cómo el proyecto de cada cliente se hace realidad con un acabado que mejora el espacio y supera sus expectativas.',
+        'about.missionLabel': 'Nuestra misión', 'about.mission': 'Transformar espacios con calidad artesanal duradera, acabados funcionales, comunicación honesta y resultados bien terminados desde la estructura hasta el acabado final.',
+        'about.visionLabel': 'Nuestra visión', 'about.vision': 'Convertirnos en una empresa líder y confiable en carpintería y remodelación, reconocida por calidad artesanal, integridad, excelente servicio y relaciones duraderas con cada cliente.',
+        'about.c1': 'Acabados limpios y detallados con materiales confiables', 'about.c2': 'Integridad, respeto y comunicación honesta', 'about.c3': 'Horarios confiables, entregas puntuales y áreas limpias', 'about.c4': 'Satisfacción del cliente, excelencia y relaciones duraderas', 'about.c5': 'Ideas nuevas, técnicas probadas y materiales de calidad', 'about.c6': 'Trabajo residencial, comercial y para socios de remodelación',
         'services.eyebrow': 'Qué Hacemos', 'services.h2': 'Desde la estructura<br>hasta el acabado final', 'services.p': 'Un solo equipo confiable para drywall, cinta, reparaciones, framing, pintura y protección comercial FRP.',
         'services.t1': 'Instalación de Drywall', 'services.d1': 'Pegamos y atornillamos drywall, mantenemos las juntas ajustadas para un mejor acabado, usamos materiales como USG, CertainTeed y Gold Bond, y trabajamos proyectos nuevos, remodelaciones, soundproofing y detalles personalizados de drywall.',
         'services.t2': 'Cinta y Acabado', 'services.d2': 'Cinta en juntas ajustadas, acabados Nivel 1-5, herramientas automáticas, acabados manuales limpios, patchwork excepcional y productos como TapeTech, USG, ProForm y Trim-Tex.',
@@ -3006,16 +2974,14 @@
         'services.t5': 'Pintura', 'services.d5': 'Preparación y acabado de pintura para convertir una superficie lisa de drywall en un espacio limpio y listo para usarse.',
         'services.t6': 'Instalación de FRP', 'services.d6': 'Protección comercial de muros con paneles FRP resistentes a humedad, acabados sanitarios, preparación de superficie, paneles y molduras.',
         'services.cta': 'Cotizar',
-        'gallery.eyebrow': 'Trabajos Recientes', 'gallery.h2': 'Galería de proyectos', 'gallery.p': 'Aquí se pueden agregar fotos reales de proyectos y antes/después cuando el negocio las apruebe.',
+        'gallery.eyebrow': 'Trabajos Recientes', 'gallery.h2': 'Galería de proyectos', 'gallery.p': 'Detalles de drywall, reparación y acabado para proyectos residenciales, comerciales y de remodelación.',
         'gallery.before': 'Antes', 'gallery.after': 'Después', 'gallery.addPhoto': 'AGREGAR<br>FOTO',
         'gallery.tag1': 'Oficina &middot; Comercial', 'gallery.tag2': 'Sala &middot; Cinta y Acabado', 'gallery.tag3': 'Escalera &middot; Instalación', 'gallery.tag4': 'Daño por Agua &middot; Reparación',
-        'gallery.note': '&rarr; Agrega fotos reales desde el mismo ángulo para mostrar mejor la calidad del trabajo.',
         'tiktok.eyebrow': 'En Obra', 'tiktok.h2': 'Míranos trabajar', 'tiktok.p': 'Videos reales de proyectos de True Craft Interiors.',
         'social.copy': 'Mira más avances de proyectos en redes sociales.',
         'social.facebook': 'Síguenos en Facebook',
         'tiktok.follow': 'Síguenos en TikTok',
         'tiktok.v1': 'Trabajo de drywall en proceso', 'tiktok.v2': 'Detalle de cinta y acabado', 'tiktok.v3': 'Detalles de reparación y acabado',
-        'tiktok.note': '&rarr; Reproductor propio con videos alojados en Cloudinary.',
         'testi.eyebrow': 'Reseñas', 'testi.of5': 'vista previa', 'testi.based': '<strong>Pendiente: reemplazar nombres, reseñas y fotos por datos reales del cliente antes de publicar.</strong>',
         'faq.eyebrow': 'Preguntas Frecuentes', 'faq.h2': 'Antes de llamar',
         'faq.q1': '¿Qué tan rápido recibo una cotización?', 'faq.a1': 'Los estimados gratis normalmente se preparan en 1&ndash;2 días hábiles. Podemos revisar el proyecto en persona o comenzar con fotos claras.',
