@@ -1,0 +1,257 @@
+let currentLang = document.documentElement.lang === 'es' ? 'es' : 'en';
+
+function applyLanguage(lang) {
+  currentLang = lang;
+  const dict = I18N[lang];
+  document.documentElement.lang = lang;
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (dict[key] !== undefined) el.innerHTML = dict[key];
+  });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    const key = el.getAttribute('data-i18n-placeholder');
+    if (dict[key] !== undefined) el.setAttribute('placeholder', dict[key]);
+  });
+  const langToggle = document.getElementById('langToggle');
+  if (langToggle) langToggle.setAttribute('data-active', lang);
+  const nextLang = lang === 'es' ? 'en' : 'es';
+  document.querySelectorAll('[data-language-link]').forEach(link => {
+    link.setAttribute('href', nextLang === 'es' ? '/es/' : '/');
+    link.setAttribute('lang', nextLang);
+    link.setAttribute('aria-label', nextLang === 'es' ? 'Ver el sitio en español' : 'View the site in English');
+    if (!link.classList.contains('lang-toggle')) link.textContent = nextLang === 'es' ? 'Español' : 'English';
+  });
+  const serviceAreasLink = document.getElementById('serviceAreasLink');
+  if (serviceAreasLink) serviceAreasLink.setAttribute('href', lang === 'es' ? '/es/areas-de-servicio/' : '/service-areas/');
+  const serviceRoutes = lang === 'es'
+    ? ['/es/instalacion-drywall/', '/es/acabado-drywall/', '/es/reparacion-drywall/', '/es/framing-interior/', '/es/pintura/', '/es/instalacion-frp/']
+    : ['/drywall-installation/', '/drywall-taping-finishing/', '/drywall-repair/', '/interior-framing/', '/painting/', '/frp-installation/'];
+  document.querySelectorAll('a[data-i18n^="services.t"]').forEach((link, index) => {
+    if (serviceRoutes[index % serviceRoutes.length]) link.setAttribute('href', serviceRoutes[index % serviceRoutes.length]);
+  });
+  const formLanguage = document.getElementById('formLanguage');
+  if (formLanguage) formLanguage.value = lang === 'es' ? 'Spanish' : 'English';
+  // the open FAQ answer just got new (possibly longer/shorter) text — resize it
+  if (typeof faqItems !== 'undefined') {
+    requestAnimationFrame(() => faqItems.forEach(setFaqHeight));
+  }
+}
+
+// language toast (subtle, non-blocking)
+const langToast = document.getElementById('langToast');
+document.querySelectorAll('.lang-opt').forEach(btn => {
+  btn.addEventListener('click', () => {
+    window.location.href = btn.dataset.lang === 'es' ? '/es/' : '/';
+  });
+});
+document.getElementById('langToastClose').addEventListener('click', () => {
+  langToast.classList.remove('show');
+  langToast.classList.add('hidden');
+});
+// page is fully visible immediately; the toast eases in after a short beat
+setTimeout(() => { langToast.classList.add('show'); }, 900);
+
+// scroll progress bar + header shrink
+const progressFill = document.getElementById('progressFill');
+const headerEl = document.querySelector('header');
+window.addEventListener('scroll', () => {
+  const h = document.documentElement;
+  const scrolled = (h.scrollTop) / (h.scrollHeight - h.clientHeight) * 100;
+  progressFill.style.width = scrolled + '%';
+  headerEl.classList.toggle('scrolled', h.scrollTop > 40);
+}, { passive: true });
+
+// count-up stats
+const counters = document.querySelectorAll('[data-count]');
+const counterIO = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (!entry.isIntersecting) return;
+    const el = entry.target;
+    const target = parseInt(el.dataset.count, 10);
+    const suffix = el.dataset.suffix || '';
+    const duration = 1100;
+    const start = performance.now();
+    function tick(now) {
+      const p = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = Math.round(eased * target) + suffix;
+      if (p < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+    counterIO.unobserve(el);
+  });
+}, { threshold: 0.6 });
+counters.forEach(c => counterIO.observe(c));
+
+
+// faq accordion — height is measured from real content, so it never clips
+// (fixes the layout breaking when Spanish text runs longer than English)
+function setFaqHeight(item) {
+  const a = item.querySelector('.faq-a');
+  a.style.maxHeight = item.classList.contains('open') ? (a.scrollHeight + 'px') : '0px';
+}
+const faqItems = document.querySelectorAll('.faq-item');
+faqItems.forEach(item => {
+  const q = item.querySelector('.faq-q');
+  q.addEventListener('click', () => {
+    const isOpen = item.classList.contains('open');
+    faqItems.forEach(i => { i.classList.remove('open'); i.querySelector('.faq-q').setAttribute('aria-expanded', 'false'); setFaqHeight(i); });
+    if (!isOpen) { item.classList.add('open'); q.setAttribute('aria-expanded', 'true'); }
+    setFaqHeight(item);
+  });
+  setFaqHeight(item); // initial state (first item starts open)
+});
+applyLanguage(currentLang);
+// recalc if the viewport is resized (text reflows to more/fewer lines)
+let faqResizeTimer;
+window.addEventListener('resize', () => {
+  clearTimeout(faqResizeTimer);
+  faqResizeTimer = setTimeout(() => faqItems.forEach(setFaqHeight), 150);
+});
+
+// mobile nav
+const menuToggle = document.getElementById('menuToggle');
+const menuClose = document.getElementById('menuClose');
+const mobileNav = document.getElementById('mobileNav');
+menuToggle.addEventListener('click', () => { mobileNav.classList.add('open'); menuToggle.setAttribute('aria-expanded', 'true'); });
+menuClose.addEventListener('click', () => { mobileNav.classList.remove('open'); menuToggle.setAttribute('aria-expanded', 'false'); });
+mobileNav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => mobileNav.classList.remove('open')));
+
+// Reliable in-page navigation with an offset for the sticky header.
+function scrollToPageSection(hash) {
+  if (!hash || hash === '#') return;
+  const target = document.getElementById(decodeURIComponent(hash.slice(1)));
+  if (!target) return;
+  const headerOffset = (document.querySelector('header')?.offsetHeight || 0) + 8;
+  target.scrollIntoView({ block: 'start' });
+  window.scrollBy(0, -headerOffset);
+}
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', event => {
+    const hash = anchor.getAttribute('href');
+    if (!hash || !document.getElementById(decodeURIComponent(hash.slice(1)))) return;
+    event.preventDefault();
+    history.pushState(null, '', hash);
+    scrollToPageSection(hash);
+  });
+});
+window.addEventListener('hashchange', () => scrollToPageSection(window.location.hash));
+if (window.location.hash) setTimeout(() => scrollToPageSection(window.location.hash), 50);
+
+// scroll reveal
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+}, { threshold: 0.14 });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+
+// Review preview rotator. Preview labels stay visible until verified reviews replace this content.
+let tIndex = 0;
+const tQuote = document.getElementById('tQuote');
+const tWho = document.getElementById('tWho');
+const tImage = document.getElementById('tImage');
+const tImageButton = document.getElementById('tImageButton');
+const tAvatar = document.getElementById('tAvatar');
+const tName = document.getElementById('tName');
+const tJob = document.getElementById('tJob');
+const dots = document.querySelectorAll('#tDots button');
+function showTestimonial(i) {
+  const list = TESTIMONIALS_I18N[currentLang] || TESTIMONIALS_I18N.en;
+  tIndex = i;
+  tQuote.textContent = list[i].q;
+  tWho.textContent = list[i].w;
+  tImage.setAttribute('src', list[i].img);
+  tImage.setAttribute('alt', list[i].alt);
+  tAvatar.textContent = list[i].avatar;
+  tName.innerHTML = list[i].name;
+  tJob.textContent = list[i].job;
+  dots.forEach(d => d.classList.toggle('active', Number(d.dataset.i) === i));
+}
+dots.forEach(d => d.addEventListener('click', () => showTestimonial(Number(d.dataset.i))));
+showTestimonial(0);
+setInterval(() => showTestimonial((tIndex + 1) % (TESTIMONIALS_I18N[currentLang] || TESTIMONIALS_I18N.en).length), 6500);
+
+const imageLightbox = document.getElementById('imageLightbox');
+const imageLightboxImg = document.getElementById('ilImage');
+const imageLightboxCaption = document.getElementById('ilCaption');
+const imageLightboxClose = document.getElementById('ilClose');
+function openImageLightbox() {
+  const item = (TESTIMONIALS_I18N[currentLang] || TESTIMONIALS_I18N.en)[tIndex];
+  imageLightboxImg.setAttribute('src', item.img);
+  imageLightboxImg.setAttribute('alt', item.alt);
+  imageLightboxCaption.textContent = item.job;
+  imageLightbox.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeImageLightbox() {
+  imageLightbox.classList.remove('open');
+  imageLightboxImg.setAttribute('src', '');
+  document.body.style.overflow = '';
+}
+tImageButton.addEventListener('click', openImageLightbox);
+imageLightboxClose.addEventListener('click', closeImageLightbox);
+imageLightbox.addEventListener('click', e => { if (e.target === imageLightbox) closeImageLightbox(); });
+
+// Basin submission with client-side attachment limits.
+const form = document.getElementById('quoteForm');
+const note = document.getElementById('formNote');
+const projectPhotos = document.getElementById('projectPhotos');
+const photoStatus = document.getElementById('photoStatus');
+const maxPhotoBytes = 6 * 1024 * 1024;
+function validatePhotos() {
+  const files = Array.from(projectPhotos.files || []);
+  const total = files.reduce((sum, file) => sum + file.size, 0);
+  const invalidType = files.some(file => !['image/jpeg', 'image/png', 'image/webp'].includes(file.type));
+  let message = '';
+  if (files.length > 3) message = 'Please choose no more than 3 photos.';
+  else if (total > maxPhotoBytes) message = 'The selected photos exceed the 6 MB total limit.';
+  else if (invalidType) message = 'Only JPG, PNG and WebP images are accepted.';
+  projectPhotos.setCustomValidity(message);
+  photoStatus.textContent = message || (files.length ? `${files.length} photo${files.length === 1 ? '' : 's'} ready to send.` : '');
+  photoStatus.classList.toggle('error', Boolean(message));
+  return !message;
+}
+projectPhotos.addEventListener('change', validatePhotos);
+form.addEventListener('submit', function (e) {
+  if (!validatePhotos()) {
+    e.preventDefault();
+    projectPhotos.reportValidity();
+  }
+});
+
+// TikTok-style video cards: click a thumbnail to open the big lightbox player.
+// Since playback only happens inside the lightbox (a fixed overlay that blocks
+// the rest of the page), there's no way for a clip to keep playing in the
+// background while you've scrolled off somewhere else on the site — closing
+// the lightbox stops it instantly, and it can't be left open while browsing.
+const videoCards = document.querySelectorAll('[data-tt-video]');
+const lightbox = document.getElementById('videoLightbox');
+const lightboxVideo = document.getElementById('vlVideo');
+const lightboxSource = document.getElementById('vlSource');
+const lightboxClose = document.getElementById('vlClose');
+
+function openLightbox(src, poster) {
+  lightboxSource.setAttribute('src', src);
+  lightboxVideo.setAttribute('poster', poster);
+  lightboxVideo.load();
+  lightbox.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  lightboxVideo.play().catch(() => { });
+}
+function closeLightbox() {
+  lightbox.classList.remove('open');
+  lightboxVideo.pause();
+  lightboxVideo.currentTime = 0;
+  document.body.style.overflow = '';
+}
+videoCards.forEach(card => {
+  card.addEventListener('click', () => {
+    openLightbox(card.dataset.src, card.dataset.poster);
+  });
+});
+lightboxClose.addEventListener('click', closeLightbox);
+lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLightbox(); });
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && lightbox.classList.contains('open')) closeLightbox();
+  if (e.key === 'Escape' && imageLightbox.classList.contains('open')) closeImageLightbox();
+});

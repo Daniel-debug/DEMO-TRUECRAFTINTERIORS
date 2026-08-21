@@ -1,0 +1,33 @@
+.two,
+.grid,
+.nav,
+.nav-links,
+.contact p {
+  min-width: 0;
+}
+
+.two > *,
+.grid > * {
+  min-width: 0;
+}
+
+.contact a[href^="mailto:"],
+.card,
+h1,
+h2,
+h3,
+p,
+li {
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 760px) {
+  body {
+    overflow-x: hidden;
+  }
+
+  .card,
+  .quote-form {
+    width: 100%;
+  }
+}

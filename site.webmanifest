@@ -1,0 +1,9 @@
+{
+  "name": "True Craft Interiors",
+  "short_name": "True Craft",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#121212",
+  "theme_color": "#121212",
+  "icons": [{"src":"/assets/logo.png","sizes":"240x240","type":"image/png"}]
+}
