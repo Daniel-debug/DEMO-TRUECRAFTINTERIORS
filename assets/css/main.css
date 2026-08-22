@@ -1064,23 +1064,32 @@ section {
   white-space: nowrap;
 }
 
-.photo-upload-label {
+.field .photo-upload-label {
   display: flex;
   align-items: center;
+  justify-content: flex-start;
   gap: 12px;
-  min-height: 74px;
-  padding: 14px;
-  border: 1.5px dashed #d3c8b9;
-  background: #fffaf2;
-  border-radius: 4px;
+  min-height: 62px;
+  margin: 0;
+  padding: 12px 14px;
+  border: 1.5px solid #d8cec0;
+  background: linear-gradient(180deg, #fffaf2 0%, #fff4e8 100%);
+  border-radius: 6px;
   cursor: pointer;
-  transition: border-color .18s ease, background .18s ease, transform .18s ease;
+  font-family: 'Public Sans', sans-serif;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--charcoal);
+  box-shadow: 0 8px 18px rgba(18, 18, 18, 0.06);
+  transition: border-color .18s ease, background .18s ease, transform .18s ease, box-shadow .18s ease;
 }
 
-.photo-upload-label:hover,
+.field .photo-upload-label:hover,
 .photo-upload input[type="file"]:focus + .photo-upload-label {
   border-color: var(--orange);
   background: #fff4e6;
+  box-shadow: 0 10px 22px rgba(255, 112, 24, 0.14);
+  transform: translateY(-1px);
 }
 
 .photo-upload.has-files .photo-upload-label {
@@ -1098,7 +1107,7 @@ section {
   flex: 0 0 42px;
   background: var(--orange);
   color: var(--white);
-  border-radius: 50%;
+  border-radius: 6px;
   font-family: 'IBM Plex Mono', monospace;
   font-size: 1.25rem;
   font-weight: 700;
@@ -1113,16 +1122,23 @@ section {
 }
 
 .photo-upload-copy strong {
+  display: block;
   font-family: 'Big Shoulders', sans-serif;
-  font-size: 1.08rem;
+  font-size: 1.15rem;
   line-height: 1;
   text-transform: uppercase;
+  letter-spacing: 0;
   color: var(--charcoal);
 }
 
 .photo-upload-copy small {
+  display: block;
+  margin-top: 4px;
   color: var(--concrete-dark);
-  font-size: 0.78rem;
+  font-family: 'Public Sans', sans-serif;
+  font-size: 0.8rem;
+  text-transform: none;
+  letter-spacing: 0;
   line-height: 1.3;
 }
 
