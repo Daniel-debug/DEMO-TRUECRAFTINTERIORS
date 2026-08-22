@@ -323,13 +323,22 @@ img { max-width: 100%; height: auto; }
   color: #fff;
   outline: none;
 }
-.check { display: flex; gap: 10px; align-items: flex-start; margin: 17px 0; }
-.check.field-error { flex-wrap: wrap; }
+.check {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: 10px;
+  row-gap: 6px;
+  align-items: flex-start;
+  margin: 17px 0;
+}
 .check.field-error input { outline: 2px solid #a92e18; outline-offset: 2px; }
 .check .field-error-message {
-  flex: 0 0 100%;
-  margin-top: -4px;
-  margin-left: 28px;
+  grid-column: 2;
+  margin-top: -2px;
+  margin-left: 0;
+}
+.check span:not(.field-error-message) {
+  min-width: 0;
 }
 
 .footer {

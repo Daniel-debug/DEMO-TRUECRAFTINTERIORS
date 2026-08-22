@@ -1496,8 +1496,10 @@ section {
 }
 
 .consent-row {
-  display: flex;
-  gap: 10px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: 10px;
+  row-gap: 6px;
   align-items: flex-start;
   margin: 14px 0;
   font-size: 0.82rem;
@@ -1506,7 +1508,6 @@ section {
 .consent-row input { margin-top: 4px; accent-color: var(--orange); }
 
 .consent-row.field-error {
-  flex-wrap: wrap;
   color: #111;
 }
 
@@ -1516,9 +1517,14 @@ section {
 }
 
 .consent-row .field-error-message {
-  flex: 0 0 100%;
-  margin-top: -4px;
-  margin-left: 28px;
+  grid-column: 2;
+  margin-top: -2px;
+  margin-left: 0;
+}
+
+.consent-row span:not(.field-error-message) {
+  min-width: 0;
+  line-height: 1.45;
 }
 
 /* ---------- FOOTER ---------- */

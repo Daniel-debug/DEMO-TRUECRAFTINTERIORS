@@ -486,6 +486,10 @@ function validateRequiredFields({ focusFirst = false } = {}) {
   return !firstInvalidField;
 }
 
+function clearRequiredFieldErrors() {
+  form.querySelectorAll('[required]').forEach(field => setFieldError(field, ''));
+}
+
 function photoKey(file) {
   return `${file.name}-${file.size}-${file.lastModified}`;
 }
@@ -640,7 +644,7 @@ form.addEventListener('submit', async function (e) {
     syncPhotoInputFiles();
     const formLanguage = document.getElementById('formLanguage');
     if (formLanguage) formLanguage.value = currentLang === 'es' ? 'Spanish' : 'English';
-    validateRequiredFields();
+    clearRequiredFieldErrors();
     validatePhotos();
     resetPhotoUploadCopy();
     setFormNote('success', formText('form.successTitle', 'Request sent successfully'), formText('form.successDetail', 'We received your quote request and will reply within 1-2 business days.'));

@@ -76,6 +76,10 @@ function validateRequiredFields({ focusFirst = false } = {}) {
   return !firstInvalidField;
 }
 
+function clearRequiredFieldErrors() {
+  form.querySelectorAll('[required]').forEach(field => setFieldError(field, ''));
+}
+
 function photoKey(file) {
   return `${file.name}-${file.size}-${file.lastModified}`;
 }
@@ -215,7 +219,7 @@ form.addEventListener('submit', async event => {
     form.reset();
     selectedPhotoFiles = [];
     syncPhotoInputFiles();
-    validateRequiredFields();
+    clearRequiredFieldErrors();
     validatePhotos();
     resetPhotoUploadCopy();
     photoStatus.classList.remove('sending', 'error');
