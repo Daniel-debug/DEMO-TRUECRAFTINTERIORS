@@ -63,15 +63,7 @@ function validatePhotos(photos) {
   return '';
 }
 
-function normalizePublicId(value) {
-  return clean(value)
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
-    .slice(0, 80);
-}
-
-async function uploadPhoto(file, env, index, fields) {
+async function uploadPhoto(file, env) {
   const cloudName = clean(env.CLOUDINARY_CLOUD_NAME);
   const apiKey = clean(env.CLOUDINARY_API_KEY);
   const apiSecret = clean(env.CLOUDINARY_API_SECRET);
@@ -81,10 +73,8 @@ async function uploadPhoto(file, env, index, fields) {
   }
 
   const month = new Date().toISOString().slice(0, 7);
-  const requestSlug = normalizePublicId(`${fields.name}-${Date.now()}-${index + 1}`) || `quote-photo-${Date.now()}-${index + 1}`;
   const params = {
     folder: `${clean(env.CLOUDINARY_FOLDER) || DEFAULT_CLOUDINARY_FOLDER}/${month}`,
-    public_id: requestSlug,
     tags: 'quote-request,true-craft-interiors',
     timestamp: Math.floor(Date.now() / 1000).toString()
   };
@@ -107,7 +97,7 @@ async function uploadPhoto(file, env, index, fields) {
   }
 
   return {
-    name: `Project photo ${index + 1}`,
+    name: file.name || result.original_filename || 'Project photo',
     url: result.secure_url,
     publicId: result.public_id
   };
@@ -127,7 +117,7 @@ async function sendEmail({ env, fields, uploads }) {
     ? uploads.map((photo, index) => `
       <tr>
         <td style="padding:10px 0;border-bottom:1px solid #eee7dd;">
-          <a href="${escapeHtml(photo.url)}" style="color:#c45a1b;text-decoration:none;font-weight:700;">Project photo ${index + 1}</a>
+          <a href="${escapeHtml(photo.url)}" style="color:#c45a1b;text-decoration:none;font-weight:700;">Photo ${index + 1}: ${escapeHtml(photo.name)}</a>
         </td>
       </tr>
     `).join('')
@@ -276,7 +266,7 @@ export async function onRequestPost({ request, env }) {
 
     const uploads = [];
     for (let index = 0; index < photos.length; index += 1) {
-      uploads.push(await uploadPhoto(photos[index], env, index, fields));
+      uploads.push(await uploadPhoto(photos[index], env));
     }
 
     await sendEmail({ env, fields, uploads });
