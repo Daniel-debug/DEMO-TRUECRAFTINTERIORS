@@ -652,8 +652,17 @@
           </div>
           <div class="field">
             <label for="projectPhotos" data-i18n="form.photos">Project Photos (optional)</label>
-            <input id="projectPhotos" name="project_photos[]" type="file"
-              accept="image/jpeg,image/png,image/webp" multiple>
+            <div class="photo-upload">
+              <input id="projectPhotos" name="project_photos[]" type="file"
+                accept="image/jpeg,image/png,image/webp" multiple>
+              <label class="photo-upload-label" for="projectPhotos">
+                <span class="photo-upload-icon" aria-hidden="true">+</span>
+                <span class="photo-upload-copy">
+                  <strong data-i18n="form.photoButton">Choose photos</strong>
+                  <small data-i18n="form.photoHint">Drag or select clear project images</small>
+                </span>
+              </label>
+            </div>
             <span class="file-help" data-i18n="form.photoHelp">Up to 3 photos. Maximum 8 MB each. JPG, PNG or WebP.</span>
             <span class="file-status" id="photoStatus" aria-live="polite"></span>
           </div>

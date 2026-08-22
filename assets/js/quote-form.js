@@ -13,6 +13,7 @@ function validatePhotos() {
   else if (files.some(file => !allowedPhotoTypes.includes(file.type))) message = 'Solo se aceptan imágenes JPG, PNG o WebP.';
   photos.setCustomValidity(message);
   photoStatus.textContent = message || (files.length ? `${files.length} foto${files.length === 1 ? '' : 's'} lista${files.length === 1 ? '' : 's'} para enviar.` : 'Hasta 3 fotos; máximo 8 MB por foto.');
+  photos.closest('.photo-upload')?.classList.toggle('has-files', files.length > 0 && !message);
   return !message;
 }
 photos.addEventListener('change', validatePhotos);

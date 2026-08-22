@@ -2,6 +2,9 @@ const MAX_PHOTOS = 3;
 const MAX_PHOTO_BYTES = 8 * 1024 * 1024;
 const ALLOWED_PHOTO_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
 const DEFAULT_CLOUDINARY_FOLDER = 'quote-requests/true-craft-interiors';
+const BRAND_NAME = 'True Craft Interiors';
+const SITE_URL = 'https://truecraftinteriorschicago.com';
+const LOGO_URL = `${SITE_URL}/assets/logo.png`;
 
 function jsonResponse(body, status = 200) {
   return new Response(JSON.stringify(body), {
@@ -60,7 +63,15 @@ function validatePhotos(photos) {
   return '';
 }
 
-async function uploadPhoto(file, env) {
+function normalizePublicId(value) {
+  return clean(value)
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 80);
+}
+
+async function uploadPhoto(file, env, index, fields) {
   const cloudName = clean(env.CLOUDINARY_CLOUD_NAME);
   const apiKey = clean(env.CLOUDINARY_API_KEY);
   const apiSecret = clean(env.CLOUDINARY_API_SECRET);
@@ -70,8 +81,10 @@ async function uploadPhoto(file, env) {
   }
 
   const month = new Date().toISOString().slice(0, 7);
+  const requestSlug = normalizePublicId(`${fields.name}-${Date.now()}-${index + 1}`) || `quote-photo-${Date.now()}-${index + 1}`;
   const params = {
     folder: `${clean(env.CLOUDINARY_FOLDER) || DEFAULT_CLOUDINARY_FOLDER}/${month}`,
+    public_id: requestSlug,
     tags: 'quote-request,true-craft-interiors',
     timestamp: Math.floor(Date.now() / 1000).toString()
   };
@@ -94,7 +107,7 @@ async function uploadPhoto(file, env) {
   }
 
   return {
-    name: file.name || result.original_filename || 'Project photo',
+    name: `Project photo ${index + 1}`,
     url: result.secure_url,
     publicId: result.public_id
   };
@@ -109,25 +122,84 @@ async function sendEmail({ env, fields, uploads }) {
     throw new Error('Resend environment variables are missing.');
   }
 
+  const safeSource = escapeHtml(fields.source);
   const photoLinks = uploads.length
-    ? uploads.map((photo, index) => `<li><a href="${escapeHtml(photo.url)}">Photo ${index + 1}: ${escapeHtml(photo.name)}</a></li>`).join('')
-    : '<li>No photos uploaded.</li>';
+    ? uploads.map((photo, index) => `
+      <tr>
+        <td style="padding:10px 0;border-bottom:1px solid #eee7dd;">
+          <a href="${escapeHtml(photo.url)}" style="color:#c45a1b;text-decoration:none;font-weight:700;">Project photo ${index + 1}</a>
+        </td>
+      </tr>
+    `).join('')
+    : '<tr><td style="padding:10px 0;color:#6f6a62;">No photos uploaded.</td></tr>';
 
   const textPhotoLinks = uploads.length
     ? uploads.map((photo, index) => `Photo ${index + 1}: ${photo.url}`).join('\n')
     : 'No photos uploaded.';
 
   const html = `
-    <h2>New quote request - True Craft Interiors</h2>
-    <p><strong>Name:</strong> ${escapeHtml(fields.name)}</p>
-    <p><strong>Phone:</strong> ${escapeHtml(fields.phone)}</p>
-    <p><strong>Email:</strong> ${escapeHtml(fields.email)}</p>
-    <p><strong>Service:</strong> ${escapeHtml(fields.service)}</p>
-    <p><strong>Language:</strong> ${escapeHtml(fields.language)}</p>
-    <p><strong>Source:</strong> ${escapeHtml(fields.source)}</p>
-    <p><strong>Project details:</strong><br>${escapeHtml(fields.details)}</p>
-    <h3>Project photos</h3>
-    <ul>${photoLinks}</ul>
+    <div style="margin:0;padding:0;background:#f4f0e8;font-family:Arial,Helvetica,sans-serif;color:#24211d;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;background:#f4f0e8;">
+        <tr>
+          <td align="center" style="padding:28px 14px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:680px;border-collapse:collapse;background:#fffaf2;border:1px solid #e1d8ca;">
+              <tr>
+                <td style="background:#191816;padding:22px 26px;border-bottom:4px solid #e56f24;">
+                  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
+                    <tr>
+                      <td style="vertical-align:middle;">
+                        <img src="${LOGO_URL}" alt="${BRAND_NAME}" width="54" height="54" style="display:block;border:0;border-radius:2px;">
+                      </td>
+                      <td style="vertical-align:middle;padding-left:14px;">
+                        <div style="font-size:20px;line-height:1.1;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:#ffffff;">${BRAND_NAME}</div>
+                        <div style="font-size:12px;line-height:1.4;color:#d8d2c8;text-transform:uppercase;letter-spacing:1.5px;">New Quote Request</div>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:28px 26px 10px;">
+                  <h1 style="margin:0 0 8px;font-size:26px;line-height:1.2;color:#24211d;">New quote request</h1>
+                  <p style="margin:0;color:#6f6a62;font-size:14px;">A customer submitted the website quote form.</p>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:14px 26px;">
+                  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;background:#ffffff;border:1px solid #eee7dd;">
+                    <tr><td style="padding:14px 16px;border-bottom:1px solid #eee7dd;"><strong>Name:</strong> ${escapeHtml(fields.name)}</td></tr>
+                    <tr><td style="padding:14px 16px;border-bottom:1px solid #eee7dd;"><strong>Phone:</strong> <a href="tel:${escapeHtml(fields.phone)}" style="color:#c45a1b;text-decoration:none;">${escapeHtml(fields.phone)}</a></td></tr>
+                    <tr><td style="padding:14px 16px;border-bottom:1px solid #eee7dd;"><strong>Email:</strong> <a href="mailto:${escapeHtml(fields.email)}" style="color:#c45a1b;text-decoration:none;">${escapeHtml(fields.email)}</a></td></tr>
+                    <tr><td style="padding:14px 16px;border-bottom:1px solid #eee7dd;"><strong>Service:</strong> ${escapeHtml(fields.service)}</td></tr>
+                    <tr><td style="padding:14px 16px;border-bottom:1px solid #eee7dd;"><strong>Language:</strong> ${escapeHtml(fields.language)}</td></tr>
+                    <tr><td style="padding:14px 16px;"><strong>Source:</strong> <a href="${SITE_URL}" style="color:#c45a1b;text-decoration:none;">${safeSource}</a></td></tr>
+                  </table>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:8px 26px 14px;">
+                  <h2 style="margin:0 0 8px;font-size:18px;color:#24211d;">Project details</h2>
+                  <div style="background:#ffffff;border:1px solid #eee7dd;padding:16px;line-height:1.6;font-size:15px;">${escapeHtml(fields.details)}</div>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:8px 26px 30px;">
+                  <h2 style="margin:0 0 8px;font-size:18px;color:#24211d;">Project photos</h2>
+                  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;background:#ffffff;border:1px solid #eee7dd;padding:0 16px;">
+                    ${photoLinks}
+                  </table>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:16px 26px;background:#24211d;color:#d8d2c8;font-size:12px;line-height:1.5;">
+                  Reply directly to this email to contact the customer. Built Right. Finished Perfectly.
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </div>
   `;
 
   const text = [
@@ -203,8 +275,8 @@ export async function onRequestPost({ request, env }) {
     }
 
     const uploads = [];
-    for (const photo of photos) {
-      uploads.push(await uploadPhoto(photo, env));
+    for (let index = 0; index < photos.length; index += 1) {
+      uploads.push(await uploadPhoto(photos[index], env, index, fields));
     }
 
     await sendEmail({ env, fields, uploads });

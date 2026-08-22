@@ -39,17 +39,36 @@ function applyLanguage(lang) {
 
 // language toast (subtle, non-blocking)
 const langToast = document.getElementById('langToast');
-document.querySelectorAll('.lang-opt').forEach(btn => {
-  btn.addEventListener('click', () => {
-    window.location.href = btn.dataset.lang === 'es' ? '/es/' : '/';
-  });
-});
-document.getElementById('langToastClose').addEventListener('click', () => {
+const langToastClose = document.getElementById('langToastClose');
+const langToastStorageKey = 'tci_language_choice';
+const langToastDismissedKey = 'tci_language_toast_dismissed';
+function hideLanguageToast(persist = false) {
+  if (!langToast) return;
   langToast.classList.remove('show');
   langToast.classList.add('hidden');
+  if (persist) localStorage.setItem(langToastDismissedKey, '1');
+}
+document.querySelectorAll('.lang-opt').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const selectedLang = btn.dataset.lang === 'es' ? 'es' : 'en';
+    localStorage.setItem(langToastStorageKey, selectedLang);
+    hideLanguageToast();
+    window.location.href = selectedLang === 'es' ? '/es/' : '/';
+  });
 });
-// page is fully visible immediately; the toast eases in after a short beat
-setTimeout(() => { langToast.classList.add('show'); }, 900);
+document.querySelectorAll('[data-language-link]').forEach(link => {
+  link.addEventListener('click', () => {
+    const targetLang = link.getAttribute('lang') === 'es' ? 'es' : 'en';
+    localStorage.setItem(langToastStorageKey, targetLang);
+    hideLanguageToast();
+  });
+});
+if (langToastClose) {
+  langToastClose.addEventListener('click', () => hideLanguageToast(true));
+}
+if (langToast && !localStorage.getItem(langToastStorageKey) && !localStorage.getItem(langToastDismissedKey)) {
+  setTimeout(() => { langToast.classList.add('show'); }, 900);
+}
 
 // scroll progress bar + header shrink
 const progressFill = document.getElementById('progressFill');
@@ -219,6 +238,7 @@ function validatePhotos() {
       : formText('form.photoReadyPlural', '{count} photos ready to send.').replace('{count}', files.length))
     : '');
   photoStatus.classList.toggle('error', Boolean(message));
+  projectPhotos.closest('.photo-upload')?.classList.toggle('has-files', files.length > 0 && !message);
   return !message;
 }
 projectPhotos.addEventListener('change', validatePhotos);
