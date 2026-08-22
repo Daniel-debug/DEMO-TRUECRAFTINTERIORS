@@ -192,30 +192,72 @@ tImageButton.addEventListener('click', openImageLightbox);
 imageLightboxClose.addEventListener('click', closeImageLightbox);
 imageLightbox.addEventListener('click', e => { if (e.target === imageLightbox) closeImageLightbox(); });
 
-// Basin submission with client-side attachment limits.
+// Quote form submission through the Cloudflare Pages Function.
 const form = document.getElementById('quoteForm');
 const note = document.getElementById('formNote');
 const projectPhotos = document.getElementById('projectPhotos');
 const photoStatus = document.getElementById('photoStatus');
-const maxPhotoBytes = 6 * 1024 * 1024;
+const maxPhotoBytes = 8 * 1024 * 1024;
+const allowedPhotoTypes = ['image/jpeg', 'image/png', 'image/webp'];
+
+function formText(key, fallback) {
+  return (window.I18N && I18N[currentLang] && I18N[currentLang][key]) || fallback;
+}
+
 function validatePhotos() {
   const files = Array.from(projectPhotos.files || []);
-  const total = files.reduce((sum, file) => sum + file.size, 0);
-  const invalidType = files.some(file => !['image/jpeg', 'image/png', 'image/webp'].includes(file.type));
+  const oversized = files.some(file => file.size > maxPhotoBytes);
+  const invalidType = files.some(file => !allowedPhotoTypes.includes(file.type));
   let message = '';
-  if (files.length > 3) message = 'Please choose no more than 3 photos.';
-  else if (total > maxPhotoBytes) message = 'The selected photos exceed the 6 MB total limit.';
-  else if (invalidType) message = 'Only JPG, PNG and WebP images are accepted.';
+  if (files.length > 3) message = formText('form.photoCountError', 'Please choose no more than 3 photos.');
+  else if (oversized) message = formText('form.photoSizeError', 'Each photo must be 8 MB or smaller.');
+  else if (invalidType) message = formText('form.photoTypeError', 'Only JPG, PNG and WebP images are accepted.');
   projectPhotos.setCustomValidity(message);
-  photoStatus.textContent = message || (files.length ? `${files.length} photo${files.length === 1 ? '' : 's'} ready to send.` : '');
+  photoStatus.textContent = message || (files.length
+    ? (files.length === 1
+      ? formText('form.photoReadySingular', '1 photo ready to send.')
+      : formText('form.photoReadyPlural', '{count} photos ready to send.').replace('{count}', files.length))
+    : '');
   photoStatus.classList.toggle('error', Boolean(message));
   return !message;
 }
 projectPhotos.addEventListener('change', validatePhotos);
-form.addEventListener('submit', function (e) {
+form.addEventListener('submit', async function (e) {
+  e.preventDefault();
   if (!validatePhotos()) {
-    e.preventDefault();
     projectPhotos.reportValidity();
+    return;
+  }
+
+  const submitButton = form.querySelector('button[type="submit"]');
+  const originalButtonText = submitButton.textContent;
+  submitButton.disabled = true;
+  submitButton.textContent = formText('form.sending', 'Sending your request...');
+  note.textContent = formText('form.sending', 'Sending your request...');
+  note.style.color = 'var(--orange-dark)';
+  note.style.fontWeight = '600';
+
+  try {
+    const response = await fetch(form.getAttribute('action') || '/api/contact', {
+      method: 'POST',
+      body: new FormData(form),
+      headers: { Accept: 'application/json' }
+    });
+
+    if (!response.ok) throw new Error('Request failed');
+
+    form.reset();
+    const formLanguage = document.getElementById('formLanguage');
+    if (formLanguage) formLanguage.value = currentLang === 'es' ? 'Spanish' : 'English';
+    validatePhotos();
+    note.textContent = formText('form.success', 'Thank you. Your quote request was sent successfully.');
+    note.style.color = 'var(--orange-dark)';
+  } catch (error) {
+    note.textContent = formText('form.error', 'We could not send your request. Please call or text (708) 983-8587.');
+    note.style.color = '#9f1d1d';
+  } finally {
+    submitButton.disabled = false;
+    submitButton.textContent = originalButtonText;
   }
 });
 

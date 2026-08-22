@@ -24,7 +24,6 @@
   <link rel="manifest" href="/site.webmanifest">
   <link rel="stylesheet" href="/assets/css/seo-pages.css">
   <link rel="stylesheet" href="/assets/css/mobile-fixes.css">
-  <script src="https://js.usebasin.com/v2.11.1.min.js" defer></script>
 </head>
 <body>
   <header class="site-header">
@@ -60,9 +59,13 @@
           <p><strong>Horario:</strong> 7:00 AM–7:00 PM<br><strong>Correo:</strong> <a href="mailto:truecraftinteriors1@gmail.com">truecraftinteriors1@gmail.com</a></p>
         </div>
 
-        <form class="quote-form" id="quoteFormEs" action="https://usebasin.com/f/a78ff957e0c0" method="post" enctype="multipart/form-data" data-basin-form>
+        <form class="quote-form" id="quoteFormEs" action="/api/contact" method="post" enctype="multipart/form-data">
           <input type="hidden" name="source" value="truecraftinteriorschicago.com/es/cotizacion/">
           <input type="hidden" name="language" value="Spanish">
+          <div style="position:absolute;left:-9999px;" aria-hidden="true">
+            <label for="companyWebsite">Sitio web de la compañía</label>
+            <input id="companyWebsite" name="company_website" type="text" tabindex="-1" autocomplete="off">
+          </div>
           <div class="field">
             <label for="name">Nombre completo</label>
             <input id="name" name="name" autocomplete="name" required>
@@ -90,12 +93,12 @@
           </div>
           <div class="field">
             <label for="details">Detalles del proyecto</label>
-            <textarea id="details" name="details" rows="4"></textarea>
+            <textarea id="details" name="details" rows="4" required></textarea>
           </div>
           <div class="field">
             <label for="photos">Fotos (opcional)</label>
             <input id="photos" name="project_photos[]" type="file" accept="image/jpeg,image/png,image/webp" multiple>
-            <small id="photoStatus">Hasta 3 fotos; máximo 6 MB en total.</small>
+            <small id="photoStatus">Hasta 3 fotos; máximo 8 MB por foto.</small>
           </div>
           <label class="check">
             <input type="checkbox" name="contact_consent" value="yes" required>

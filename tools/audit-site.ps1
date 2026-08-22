@@ -49,6 +49,7 @@ foreach ($file in $htmlFiles) {
     if ($reference -match '^(https?:|mailto:|tel:|sms:|#|data:|javascript:)') { continue }
     $clean = ($reference -split '[?#]')[0]
     if ([string]::IsNullOrWhiteSpace($clean)) { continue }
+    if ($clean -match '^/api/') { continue }
     if ($clean.StartsWith('/')) {
       $target = Join-Path $siteRoot $clean.TrimStart('/').Replace('/', '\')
     } else {
@@ -70,6 +71,7 @@ $expectedAssets = @(
   'assets/js/translations.js',
   'assets/js/main.js',
   'assets/js/quote-form.js',
+  'functions/api/contact.js',
   'assets/reviews/review-wall-prep.png',
   'assets/reviews/review-commercial-hall.png',
   'assets/reviews/review-bathroom-durock.png'

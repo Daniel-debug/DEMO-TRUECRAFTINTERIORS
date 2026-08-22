@@ -606,10 +606,14 @@
           </div>
         </div>
 
-        <form class="form-card reveal" id="quoteForm" action="https://usebasin.com/f/a78ff957e0c0"
-          method="POST" enctype="multipart/form-data" accept-charset="UTF-8" data-basin-form>
+        <form class="form-card reveal" id="quoteForm" action="/api/contact"
+          method="POST" enctype="multipart/form-data" accept-charset="UTF-8">
           <input type="hidden" name="source" value="truecraftinteriorschicago.com">
           <input type="hidden" name="language" id="formLanguage" value="English">
+          <div style="position:absolute;left:-9999px;" aria-hidden="true">
+            <label for="companyWebsite">Company website</label>
+            <input id="companyWebsite" name="company_website" type="text" tabindex="-1" autocomplete="off">
+          </div>
           <h3 data-i18n="form.title">Request a Quote</h3>
           <div class="sub" data-i18n="form.sub">We reply within 1&ndash;2 business days</div>
 
@@ -643,13 +647,13 @@
           <div class="field">
             <label for="details" data-i18n="form.details">Project Details</label>
             <textarea id="details" name="details" rows="3" placeholder="Room size, damage type, timeline..."
-              data-i18n-placeholder="form.detailsPlaceholder"></textarea>
+              data-i18n-placeholder="form.detailsPlaceholder" required></textarea>
           </div>
           <div class="field">
             <label for="projectPhotos" data-i18n="form.photos">Project Photos (optional)</label>
             <input id="projectPhotos" name="project_photos[]" type="file"
               accept="image/jpeg,image/png,image/webp" multiple>
-            <span class="file-help" data-i18n="form.photoHelp">Up to 3 photos. Maximum 6 MB total. JPG, PNG or WebP.</span>
+            <span class="file-help" data-i18n="form.photoHelp">Up to 3 photos. Maximum 8 MB each. JPG, PNG or WebP.</span>
             <span class="file-status" id="photoStatus" aria-live="polite"></span>
           </div>
           <label class="consent-row">
@@ -780,7 +784,6 @@
     </div>
   </div>
 
-  <script src="https://js.usebasin.com/v2.11.1.min.js" defer></script>
   <script src="/assets/js/translations.js"></script>
   <script src="/assets/js/main.js"></script>
 
