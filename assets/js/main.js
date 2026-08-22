@@ -216,11 +216,115 @@ const form = document.getElementById('quoteForm');
 const note = document.getElementById('formNote');
 const projectPhotos = document.getElementById('projectPhotos');
 const photoStatus = document.getElementById('photoStatus');
+const photoUpload = projectPhotos?.closest('.photo-upload');
+const photoUploadIcon = photoUpload?.querySelector('.photo-upload-icon');
+const photoUploadTitle = photoUpload?.querySelector('.photo-upload-copy strong');
+const photoUploadHint = photoUpload?.querySelector('.photo-upload-copy small');
+const photoList = document.createElement('div');
 const maxPhotoBytes = 8 * 1024 * 1024;
 const allowedPhotoTypes = ['image/jpeg', 'image/png', 'image/webp'];
+let selectedPhotoFiles = [];
+
+photoList.className = 'photo-list';
+photoList.setAttribute('aria-live', 'polite');
+photoStatus?.insertAdjacentElement('afterend', photoList);
 
 function formText(key, fallback) {
   return (window.I18N && I18N[currentLang] && I18N[currentLang][key]) || fallback;
+}
+
+function photoKey(file) {
+  return `${file.name}-${file.size}-${file.lastModified}`;
+}
+
+function mergePhotoFiles(existingFiles, newFiles) {
+  const seen = new Set(existingFiles.map(photoKey));
+  const merged = [...existingFiles];
+  newFiles.forEach(file => {
+    const key = photoKey(file);
+    if (!seen.has(key)) {
+      seen.add(key);
+      merged.push(file);
+    }
+  });
+  return merged;
+}
+
+function syncPhotoInputFiles() {
+  const transfer = new DataTransfer();
+  selectedPhotoFiles.forEach(file => transfer.items.add(file));
+  projectPhotos.files = transfer.files;
+}
+
+function renderPhotoList(files) {
+  photoList.replaceChildren();
+  if (!files.length) return;
+
+  files.forEach((file, index) => {
+    const item = document.createElement('div');
+    item.className = 'photo-list-item';
+
+    const name = document.createElement('span');
+    name.className = 'photo-list-name';
+    name.textContent = file.name || formText('form.photoFallbackName', 'Project photo');
+
+    const remove = document.createElement('button');
+    remove.type = 'button';
+    remove.className = 'photo-list-remove';
+    remove.setAttribute('aria-label', formText('form.photoRemove', 'Remove photo'));
+    remove.textContent = '×';
+    remove.addEventListener('click', () => {
+      selectedPhotoFiles.splice(index, 1);
+      syncPhotoInputFiles();
+      validatePhotos();
+    });
+
+    item.append(name, remove);
+    photoList.append(item);
+  });
+}
+
+function resetPhotoUploadCopy() {
+  if (photoUploadIcon) photoUploadIcon.textContent = '+';
+  if (photoUploadTitle) photoUploadTitle.textContent = formText('form.photoButton', 'Upload photos');
+  if (photoUploadHint) photoUploadHint.textContent = formText('form.photoHint', 'Select clear project images');
+}
+
+function updatePhotoUploadUI(files, message) {
+  if (!photoUpload) return;
+  photoUpload.classList.toggle('has-files', files.length > 0 && !message);
+  photoUpload.classList.toggle('has-error', Boolean(message));
+
+  if (message) {
+    if (photoUploadIcon) photoUploadIcon.textContent = '!';
+    if (photoUploadTitle) photoUploadTitle.textContent = formText('form.photoProblemTitle', 'Check your photos');
+    if (photoUploadHint) photoUploadHint.textContent = message;
+    return;
+  }
+
+  if (!files.length) {
+    resetPhotoUploadCopy();
+    return;
+  }
+
+  const firstName = files[0].name || formText('form.photoFallbackName', 'Project photo');
+  const extraCount = files.length - 1;
+  if (photoUploadIcon) photoUploadIcon.textContent = '✓';
+  if (photoUploadTitle) {
+    photoUploadTitle.textContent = files.length === 1
+      ? formText('form.photoSelectedSingular', '1 photo selected')
+      : formText('form.photoSelectedPlural', '{count} photos selected').replace('{count}', files.length);
+  }
+  if (photoUploadHint) {
+    photoUploadHint.textContent = extraCount > 0
+      ? `${firstName} + ${extraCount} ${extraCount === 1 ? formText('form.photoMoreSingular', 'more') : formText('form.photoMorePlural', 'more')}`
+      : firstName;
+  }
+}
+
+function setFormNote(type, title, detail) {
+  note.className = `form-note status-message ${type}`;
+  note.innerHTML = `<strong>${title}</strong><span>${detail}</span>`;
 }
 
 function validatePhotos() {
@@ -232,16 +336,17 @@ function validatePhotos() {
   else if (oversized) message = formText('form.photoSizeError', 'Each photo must be 8 MB or smaller.');
   else if (invalidType) message = formText('form.photoTypeError', 'Only JPG, PNG and WebP images are accepted.');
   projectPhotos.setCustomValidity(message);
-  photoStatus.textContent = message || (files.length
-    ? (files.length === 1
-      ? formText('form.photoReadySingular', '1 photo ready to send.')
-      : formText('form.photoReadyPlural', '{count} photos ready to send.').replace('{count}', files.length))
-    : '');
+  photoStatus.textContent = message || (files.length ? formText('form.photoAttachNote', 'Photos will be attached when you send the request.') : '');
   photoStatus.classList.toggle('error', Boolean(message));
-  projectPhotos.closest('.photo-upload')?.classList.toggle('has-files', files.length > 0 && !message);
+  updatePhotoUploadUI(files, message);
+  renderPhotoList(files);
   return !message;
 }
-projectPhotos.addEventListener('change', validatePhotos);
+projectPhotos.addEventListener('change', () => {
+  selectedPhotoFiles = mergePhotoFiles(selectedPhotoFiles, Array.from(projectPhotos.files || []));
+  syncPhotoInputFiles();
+  validatePhotos();
+});
 form.addEventListener('submit', async function (e) {
   e.preventDefault();
   if (!validatePhotos()) {
@@ -253,9 +358,7 @@ form.addEventListener('submit', async function (e) {
   const originalButtonText = submitButton.textContent;
   submitButton.disabled = true;
   submitButton.textContent = formText('form.sending', 'Sending your request...');
-  note.textContent = formText('form.sending', 'Sending your request...');
-  note.style.color = 'var(--orange-dark)';
-  note.style.fontWeight = '600';
+  setFormNote('sending', formText('form.sendingTitle', 'Sending request'), formText('form.sendingDetail', 'Please wait while we send your project details.'));
 
   try {
     const response = await fetch(form.getAttribute('action') || '/api/contact', {
@@ -267,14 +370,15 @@ form.addEventListener('submit', async function (e) {
     if (!response.ok) throw new Error('Request failed');
 
     form.reset();
+    selectedPhotoFiles = [];
+    syncPhotoInputFiles();
     const formLanguage = document.getElementById('formLanguage');
     if (formLanguage) formLanguage.value = currentLang === 'es' ? 'Spanish' : 'English';
     validatePhotos();
-    note.textContent = formText('form.success', 'Thank you. Your quote request was sent successfully.');
-    note.style.color = 'var(--orange-dark)';
+    resetPhotoUploadCopy();
+    setFormNote('success', formText('form.successTitle', 'Request sent successfully'), formText('form.successDetail', 'We received your quote request and will reply within 1-2 business days.'));
   } catch (error) {
-    note.textContent = formText('form.error', 'We could not send your request. Please call or text (708) 983-8587.');
-    note.style.color = '#9f1d1d';
+    setFormNote('error', formText('form.errorTitle', 'Request not sent'), formText('form.errorDetail', 'Please call or text (708) 983-8587 and we will help you directly.'));
   } finally {
     submitButton.disabled = false;
     submitButton.textContent = originalButtonText;

@@ -1098,6 +1098,11 @@ section {
   background: #fff7ed;
 }
 
+.photo-upload.has-error .photo-upload-label {
+  border-color: #a92e18;
+  background: #fff0ea;
+}
+
 .photo-upload-icon {
   width: 42px;
   height: 42px;
@@ -1169,6 +1174,97 @@ section {
 
 .file-status.error { color: #a92e18; font-weight: 700; }
 
+.photo-list {
+  display: grid;
+  gap: 7px;
+  margin-top: 9px;
+}
+
+.photo-list:empty {
+  display: none;
+}
+
+.photo-list-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 30px;
+  align-items: center;
+  gap: 8px;
+  min-height: 36px;
+  padding: 6px 6px 6px 10px;
+  border: 1px solid #e4d8c8;
+  border-radius: 4px;
+  background: #fffdf8;
+}
+
+.photo-list-name {
+  overflow: hidden;
+  color: var(--charcoal);
+  font-size: 0.78rem;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.photo-list-remove {
+  width: 30px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 4px;
+  background: #f4e6d7;
+  color: var(--charcoal);
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 800;
+  line-height: 1;
+  transition: background .18s ease, color .18s ease;
+}
+
+.photo-list-remove:hover,
+.photo-list-remove:focus {
+  background: #a92e18;
+  color: var(--white);
+  outline: none;
+}
+
+.status-message {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 12px 13px;
+  border: 1.5px solid var(--line);
+  border-radius: 4px;
+  background: #fffaf2;
+  line-height: 1.35;
+}
+
+.status-message strong {
+  display: block;
+  font-size: 0.86rem;
+  color: var(--charcoal);
+}
+
+.status-message span {
+  color: var(--concrete-dark);
+}
+
+.status-message.sending {
+  border-color: #e6c596;
+  background: #fff6e6;
+}
+
+.status-message.success {
+  border-color: #b9d7b8;
+  background: #f2fbf0;
+}
+
+.status-message.error {
+  border-color: #e5b6a7;
+  background: #fff0ea;
+}
+
 .consent-row {
   display: flex;
   gap: 10px;
@@ -1228,6 +1324,10 @@ footer h4 {
 footer ul li {
   margin-bottom: 10px;
   font-size: 0.9rem;
+}
+
+footer a {
+  color: #CFCBC2;
 }
 
 footer a:hover {
