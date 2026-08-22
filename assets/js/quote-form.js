@@ -15,6 +15,67 @@ photoList.className = 'photo-list';
 photoList.setAttribute('aria-live', 'polite');
 photoStatus?.insertAdjacentElement('afterend', photoList);
 
+function getFieldContainer(field) {
+  return field.closest('.field') || field.closest('.check') || field.parentElement;
+}
+
+function getFieldName(field) {
+  const label = field.id ? form.querySelector(`label[for="${field.id}"]`) : null;
+  return label?.textContent.trim() || field.name || 'Este campo';
+}
+
+function getFieldErrorElement(field) {
+  const container = getFieldContainer(field);
+  if (!container) return null;
+  const errorId = `${field.id || field.name}-error`;
+  let error = container.querySelector(`#${errorId}`);
+  if (!error) {
+    error = document.createElement('span');
+    error.id = errorId;
+    error.className = 'field-error-message';
+    error.setAttribute('aria-live', 'polite');
+    container.append(error);
+  }
+  return error;
+}
+
+function setFieldError(field, message) {
+  const container = getFieldContainer(field);
+  const error = getFieldErrorElement(field);
+  if (!container || !error) return;
+  container.classList.toggle('field-error', Boolean(message));
+  if (message) {
+    error.textContent = message;
+    field.setAttribute('aria-invalid', 'true');
+    field.setAttribute('aria-describedby', error.id);
+  } else {
+    error.textContent = '';
+    field.removeAttribute('aria-invalid');
+    field.removeAttribute('aria-describedby');
+  }
+}
+
+function getFieldErrorMessage(field) {
+  if (field.type === 'checkbox' && !field.checked) return 'Acepta el consentimiento antes de enviar.';
+  if (field.validity.valueMissing) return `${getFieldName(field)} es requerido.`;
+  if (field.type === 'email' && field.validity.typeMismatch) return 'Ingresa un correo electrónico válido.';
+  return '';
+}
+
+function validateRequiredFields({ focusFirst = false } = {}) {
+  const fields = Array.from(form.querySelectorAll('[required]'));
+  let firstInvalidField = null;
+
+  fields.forEach(field => {
+    const message = getFieldErrorMessage(field);
+    setFieldError(field, message);
+    if (message && !firstInvalidField) firstInvalidField = field;
+  });
+
+  if (firstInvalidField && focusFirst) firstInvalidField.focus({ preventScroll: false });
+  return !firstInvalidField;
+}
+
 function photoKey(file) {
   return `${file.name}-${file.size}-${file.lastModified}`;
 }
@@ -115,8 +176,21 @@ photos.addEventListener('change', () => {
   syncPhotoInputFiles();
   validatePhotos();
 });
+
+form.querySelectorAll('[required]').forEach(field => {
+  const eventName = field.tagName === 'SELECT' || field.type === 'checkbox' ? 'change' : 'input';
+  field.addEventListener(eventName, () => setFieldError(field, getFieldErrorMessage(field)));
+});
+
 form.addEventListener('submit', async event => {
   event.preventDefault();
+  if (!validateRequiredFields({ focusFirst: true })) {
+    photoStatus.classList.remove('sending', 'success');
+    photoStatus.classList.add('error');
+    photoStatus.innerHTML = '<strong>Completa los campos requeridos.</strong><span>Revisa el campo marcado e inténtalo de nuevo.</span>';
+    return;
+  }
+
   if (!validatePhotos()) {
     photos.reportValidity();
     return;
@@ -141,6 +215,7 @@ form.addEventListener('submit', async event => {
     form.reset();
     selectedPhotoFiles = [];
     syncPhotoInputFiles();
+    validateRequiredFields();
     validatePhotos();
     resetPhotoUploadCopy();
     photoStatus.classList.remove('sending', 'error');

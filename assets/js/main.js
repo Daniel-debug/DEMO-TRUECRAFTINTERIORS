@@ -21,14 +21,6 @@ function applyLanguage(lang) {
     link.setAttribute('aria-label', nextLang === 'es' ? 'Ver el sitio en español' : 'View the site in English');
     if (!link.classList.contains('lang-toggle')) link.textContent = nextLang === 'es' ? 'Español' : 'English';
   });
-  const serviceAreasLink = document.getElementById('serviceAreasLink');
-  if (serviceAreasLink) serviceAreasLink.setAttribute('href', lang === 'es' ? '/es/areas-de-servicio/' : '/service-areas/');
-  const serviceRoutes = lang === 'es'
-    ? ['/es/instalacion-drywall/', '/es/acabado-drywall/', '/es/reparacion-drywall/', '/es/framing-interior/', '/es/pintura/', '/es/instalacion-frp/']
-    : ['/drywall-installation/', '/drywall-taping-finishing/', '/drywall-repair/', '/interior-framing/', '/painting/', '/frp-installation/'];
-  document.querySelectorAll('a[data-i18n^="services.t"]').forEach((link, index) => {
-    if (serviceRoutes[index % serviceRoutes.length]) link.setAttribute('href', serviceRoutes[index % serviceRoutes.length]);
-  });
   const formLanguage = document.getElementById('formLanguage');
   if (formLanguage) formLanguage.value = lang === 'es' ? 'Spanish' : 'English';
   // the open FAQ answer just got new (possibly longer/shorter) text — resize it
@@ -142,17 +134,17 @@ function scrollToPageSection(hash) {
   const target = document.getElementById(decodeURIComponent(hash.slice(1)));
   if (!target) return;
   const headerOffset = (document.querySelector('header')?.offsetHeight || 0) + 8;
-  target.scrollIntoView({ block: 'start' });
-  window.scrollBy(0, -headerOffset);
+  const top = target.getBoundingClientRect().top + window.scrollY - headerOffset;
+  window.scrollTo({ top: Math.max(top, 0), behavior: 'smooth' });
 }
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-  anchor.addEventListener('click', event => {
-    const hash = anchor.getAttribute('href');
-    if (!hash || !document.getElementById(decodeURIComponent(hash.slice(1)))) return;
-    event.preventDefault();
-    history.pushState(null, '', hash);
-    scrollToPageSection(hash);
-  });
+document.addEventListener('click', event => {
+  const anchor = event.target.closest('a[href^="#"]');
+  if (!anchor) return;
+  const hash = anchor.getAttribute('href');
+  if (!hash || !document.getElementById(decodeURIComponent(hash.slice(1)))) return;
+  event.preventDefault();
+  history.pushState(null, '', hash);
+  scrollToPageSection(hash);
 });
 window.addEventListener('hashchange', () => scrollToPageSection(window.location.hash));
 if (window.location.hash) setTimeout(() => scrollToPageSection(window.location.hash), 50);
@@ -174,42 +166,216 @@ const tAvatar = document.getElementById('tAvatar');
 const tName = document.getElementById('tName');
 const tJob = document.getElementById('tJob');
 const dots = document.querySelectorAll('#tDots button');
-function showTestimonial(i) {
-  const list = TESTIMONIALS_I18N[currentLang] || TESTIMONIALS_I18N.en;
-  tIndex = i;
-  tQuote.textContent = list[i].q;
-  tWho.textContent = list[i].w;
-  tImage.setAttribute('src', list[i].img);
-  tImage.setAttribute('alt', list[i].alt);
-  tAvatar.textContent = list[i].avatar;
-  tName.innerHTML = list[i].name;
-  tJob.textContent = list[i].job;
-  dots.forEach(d => d.classList.toggle('active', Number(d.dataset.i) === i));
+const tCard = document.getElementById('tCard');
+let reviewTimer;
+let reviewStartX = 0;
+let reviewDeltaX = 0;
+let reviewPointerId = null;
+let reviewDragging = false;
+let reviewAnimating = false;
+
+function setReviewDragVisuals(deltaX) {
+  const progress = Math.min(Math.abs(deltaX) / 150, 1);
+  const direction = deltaX === 0 ? 0 : (deltaX > 0 ? 1 : -1);
+  const dragX = Math.max(-132, Math.min(132, deltaX * 0.55));
+  const rotate = dragX * 0.018;
+  const scale = 1 - (progress * 0.018);
+  tCard.style.setProperty('--review-drag-progress', progress.toFixed(3));
+  tCard.style.setProperty('--review-drag-direction', String(direction));
+  tCard.style.setProperty('--review-glow-position', direction > 0 ? '92%' : direction < 0 ? '8%' : '50%');
+  tCard.style.setProperty('--review-glow-scale', (1 + (progress * 0.045)).toFixed(3));
+  tCard.style.setProperty('--review-drag-edge', `${direction * 34}%`);
+  tCard.style.setProperty('--review-bar-scale', (0.24 + (progress * 0.76)).toFixed(3));
+  tCard.style.transform = `translateX(${dragX}px) rotate(${rotate}deg) scale(${scale})`;
 }
-dots.forEach(d => d.addEventListener('click', () => showTestimonial(Number(d.dataset.i))));
+
+function resetReviewDragVisuals() {
+  tCard.style.removeProperty('--review-drag-progress');
+  tCard.style.removeProperty('--review-drag-direction');
+  tCard.style.removeProperty('--review-glow-position');
+  tCard.style.removeProperty('--review-glow-scale');
+  tCard.style.removeProperty('--review-drag-edge');
+  tCard.style.removeProperty('--review-bar-scale');
+  tCard.style.transform = '';
+}
+
+function getReviewList() {
+  return TESTIMONIALS_I18N[currentLang] || TESTIMONIALS_I18N.en;
+}
+
+function showTestimonial(i) {
+  const list = getReviewList();
+  const safeIndex = (i + list.length) % list.length;
+  const item = list[safeIndex];
+  tIndex = safeIndex;
+  tQuote.textContent = item.q;
+  tWho.textContent = item.w;
+  tImage.setAttribute('src', item.img);
+  tImage.setAttribute('alt', item.alt);
+  tAvatar.textContent = item.avatar;
+  tName.innerHTML = item.name;
+  tJob.textContent = item.job;
+  dots.forEach(d => d.classList.toggle('active', Number(d.dataset.i) === safeIndex));
+}
+
+function animateTestimonialChange(nextIndex, direction = 1) {
+  const list = TESTIMONIALS_I18N[currentLang] || TESTIMONIALS_I18N.en;
+  const safeIndex = (nextIndex + list.length) % list.length;
+  if (safeIndex === tIndex || reviewAnimating) return;
+  reviewAnimating = true;
+  tCard.classList.add(direction > 0 ? 'is-changing-next' : 'is-changing-prev');
+  window.setTimeout(() => {
+    showTestimonial(safeIndex);
+    tCard.classList.remove('is-changing-next', 'is-changing-prev');
+    tCard.classList.add('is-arriving');
+    window.setTimeout(() => {
+      tCard.classList.remove('is-arriving');
+      reviewAnimating = false;
+    }, 220);
+  }, 130);
+}
+
+function restartReviewTimer() {
+  window.clearInterval(reviewTimer);
+  reviewTimer = window.setInterval(() => animateTestimonialChange(tIndex + 1, 1), 6500);
+}
+
+function goToTestimonial(index, direction) {
+  animateTestimonialChange(index, direction);
+  restartReviewTimer();
+}
+
+dots.forEach(d => d.addEventListener('click', () => {
+  const nextIndex = Number(d.dataset.i);
+  goToTestimonial(nextIndex, nextIndex > tIndex ? 1 : -1);
+}));
+
+if (tCard) {
+  tCard.addEventListener('pointerdown', event => {
+    if (reviewAnimating || event.target.closest('button, a')) return;
+    reviewPointerId = event.pointerId;
+    reviewStartX = event.clientX;
+    reviewDeltaX = 0;
+    reviewDragging = true;
+    window.clearInterval(reviewTimer);
+    tCard.classList.add('is-dragging');
+    setReviewDragVisuals(0);
+    tCard.setPointerCapture(event.pointerId);
+  });
+
+  tCard.addEventListener('pointermove', event => {
+    if (!reviewDragging || event.pointerId !== reviewPointerId) return;
+    reviewDeltaX = event.clientX - reviewStartX;
+    setReviewDragVisuals(reviewDeltaX);
+  });
+
+  function finishReviewDrag(event) {
+    if (!reviewDragging || event.pointerId !== reviewPointerId) return;
+    reviewDragging = false;
+    reviewPointerId = null;
+    tCard.classList.remove('is-dragging');
+    if (Math.abs(reviewDeltaX) > 58) {
+      const direction = reviewDeltaX < 0 ? 1 : -1;
+      tCard.classList.add(direction > 0 ? 'is-snap-next' : 'is-snap-prev');
+      resetReviewDragVisuals();
+      window.setTimeout(() => {
+        tCard.classList.remove('is-snap-next', 'is-snap-prev');
+        goToTestimonial(tIndex + direction, direction);
+      }, 110);
+    } else {
+      tCard.classList.add('is-rebounding');
+      resetReviewDragVisuals();
+      window.setTimeout(() => tCard.classList.remove('is-rebounding'), 260);
+      restartReviewTimer();
+    }
+    reviewDeltaX = 0;
+  }
+
+  tCard.addEventListener('pointerup', finishReviewDrag);
+  tCard.addEventListener('pointercancel', finishReviewDrag);
+}
+
 showTestimonial(0);
-setInterval(() => showTestimonial((tIndex + 1) % (TESTIMONIALS_I18N[currentLang] || TESTIMONIALS_I18N.en).length), 6500);
+restartReviewTimer();
 
 const imageLightbox = document.getElementById('imageLightbox');
 const imageLightboxImg = document.getElementById('ilImage');
 const imageLightboxCaption = document.getElementById('ilCaption');
 const imageLightboxClose = document.getElementById('ilClose');
-function openImageLightbox() {
-  const item = (TESTIMONIALS_I18N[currentLang] || TESTIMONIALS_I18N.en)[tIndex];
+const imageLightboxPrev = document.getElementById('ilPrev');
+const imageLightboxNext = document.getElementById('ilNext');
+let lightboxItems = [];
+let lightboxIndex = 0;
+let lightboxTouchStartX = 0;
+
+function setLightboxImage(item) {
+  if (!item) return;
   imageLightboxImg.setAttribute('src', item.img);
   imageLightboxImg.setAttribute('alt', item.alt);
   imageLightboxCaption.textContent = item.job;
+}
+
+function openImageLightbox(item, items, index = 0) {
+  if (!item) item = (TESTIMONIALS_I18N[currentLang] || TESTIMONIALS_I18N.en)[tIndex];
+  lightboxItems = items && items.length ? items : [item];
+  lightboxIndex = Math.max(0, index);
+  setLightboxImage(lightboxItems[lightboxIndex]);
+  const hasMultiple = lightboxItems.length > 1;
+  imageLightboxPrev.hidden = !hasMultiple;
+  imageLightboxNext.hidden = !hasMultiple;
   imageLightbox.classList.add('open');
   document.body.style.overflow = 'hidden';
 }
+
+function showLightboxStep(step) {
+  if (!lightboxItems.length) return;
+  lightboxIndex = (lightboxIndex + step + lightboxItems.length) % lightboxItems.length;
+  imageLightboxImg.classList.add('is-changing');
+  setTimeout(() => {
+    setLightboxImage(lightboxItems[lightboxIndex]);
+    imageLightboxImg.classList.remove('is-changing');
+  }, 120);
+}
+
 function closeImageLightbox() {
   imageLightbox.classList.remove('open');
   imageLightboxImg.setAttribute('src', '');
   document.body.style.overflow = '';
 }
-tImageButton.addEventListener('click', openImageLightbox);
+tImageButton.addEventListener('click', () => openImageLightbox());
 imageLightboxClose.addEventListener('click', closeImageLightbox);
 imageLightbox.addEventListener('click', e => { if (e.target === imageLightbox) closeImageLightbox(); });
+imageLightboxPrev.addEventListener('click', () => showLightboxStep(-1));
+imageLightboxNext.addEventListener('click', () => showLightboxStep(1));
+imageLightbox.addEventListener('touchstart', event => {
+  lightboxTouchStartX = event.changedTouches[0]?.clientX || 0;
+}, { passive: true });
+imageLightbox.addEventListener('touchend', event => {
+  const endX = event.changedTouches[0]?.clientX || 0;
+  const deltaX = endX - lightboxTouchStartX;
+  if (Math.abs(deltaX) < 45 || lightboxItems.length < 2) return;
+  showLightboxStep(deltaX < 0 ? 1 : -1);
+}, { passive: true });
+
+const galleryTiles = Array.from(document.querySelectorAll('.gallery-grid [data-gallery-src]'));
+const galleryItems = galleryTiles.map(tile => ({
+  img: tile.dataset.gallerySrc,
+  alt: tile.getAttribute('aria-label') || tile.dataset.galleryCaption || 'Project gallery image',
+  job: tile.dataset.galleryCaption || ''
+}));
+
+galleryTiles.forEach((tile, index) => {
+  function openGalleryImage() {
+    openImageLightbox(galleryItems[index], galleryItems, index);
+  }
+  tile.addEventListener('click', openGalleryImage);
+  tile.addEventListener('keydown', event => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      openGalleryImage();
+    }
+  });
+});
 
 // Quote form submission through the Cloudflare Pages Function.
 const form = document.getElementById('quoteForm');
@@ -224,13 +390,100 @@ const photoList = document.createElement('div');
 const maxPhotoBytes = 8 * 1024 * 1024;
 const allowedPhotoTypes = ['image/jpeg', 'image/png', 'image/webp'];
 let selectedPhotoFiles = [];
+const fieldLabelKeys = {
+  name: 'form.name',
+  phone: 'form.phone',
+  email: 'form.email',
+  service: 'form.service',
+  details: 'form.details'
+};
 
 photoList.className = 'photo-list';
 photoList.setAttribute('aria-live', 'polite');
 photoStatus?.insertAdjacentElement('afterend', photoList);
 
 function formText(key, fallback) {
-  return (window.I18N && I18N[currentLang] && I18N[currentLang][key]) || fallback;
+  return (typeof I18N !== 'undefined' && I18N[currentLang] && I18N[currentLang][key]) || fallback;
+}
+
+function plainFormText(key, fallback) {
+  const holder = document.createElement('span');
+  holder.innerHTML = formText(key, fallback);
+  return holder.textContent.trim();
+}
+
+function getFieldName(field) {
+  const key = fieldLabelKeys[field.name] || fieldLabelKeys[field.id];
+  if (key) return plainFormText(key, field.name || field.id);
+  return field.name || field.id || 'Field';
+}
+
+function getFieldContainer(field) {
+  return field.closest('.field') || field.closest('.consent-row') || field.parentElement;
+}
+
+function getFieldErrorElement(field) {
+  const container = getFieldContainer(field);
+  if (!container) return null;
+  const errorId = `${field.id || field.name}-error`;
+  let error = container.querySelector(`#${errorId}`);
+  if (!error) {
+    error = document.createElement('span');
+    error.id = errorId;
+    error.className = 'field-error-message';
+    error.setAttribute('aria-live', 'polite');
+    container.append(error);
+  }
+  return error;
+}
+
+function setFieldError(field, message) {
+  const container = getFieldContainer(field);
+  const error = getFieldErrorElement(field);
+  if (!container || !error) return;
+  container.classList.toggle('field-error', Boolean(message));
+  if (message) {
+    error.textContent = message;
+    field.setAttribute('aria-invalid', 'true');
+    field.setAttribute('aria-describedby', error.id);
+  } else {
+    error.textContent = '';
+    field.removeAttribute('aria-invalid');
+    field.removeAttribute('aria-describedby');
+  }
+}
+
+function getFieldErrorMessage(field) {
+  if (field.type === 'checkbox' && !field.checked) {
+    return formText('form.requiredConsent', 'Please agree before sending the request.');
+  }
+  if (field.validity.valueMissing) {
+    return formText('form.requiredField', '{field} is required.').replace('{field}', getFieldName(field));
+  }
+  if (field.type === 'email' && field.validity.typeMismatch) {
+    return formText('form.invalidEmail', 'Enter a valid email address.');
+  }
+  return '';
+}
+
+function validateRequiredFields({ focusFirst = false } = {}) {
+  const fields = Array.from(form.querySelectorAll('[required]'));
+  let firstInvalidField = null;
+
+  fields.forEach(field => {
+    const message = getFieldErrorMessage(field);
+    setFieldError(field, message);
+    if (message && !firstInvalidField) firstInvalidField = field;
+  });
+
+  if (firstInvalidField && focusFirst) {
+    const headerOffset = (document.querySelector('header')?.offsetHeight || 0) + 18;
+    const top = firstInvalidField.getBoundingClientRect().top + window.scrollY - headerOffset;
+    window.scrollTo({ top: Math.max(top, 0), behavior: 'smooth' });
+    firstInvalidField.focus({ preventScroll: true });
+  }
+
+  return !firstInvalidField;
 }
 
 function photoKey(file) {
@@ -347,8 +600,21 @@ projectPhotos.addEventListener('change', () => {
   syncPhotoInputFiles();
   validatePhotos();
 });
+
+form.querySelectorAll('[required]').forEach(field => {
+  const eventName = field.tagName === 'SELECT' || field.type === 'checkbox' ? 'change' : 'input';
+  field.addEventListener(eventName, () => {
+    setFieldError(field, getFieldErrorMessage(field));
+  });
+});
+
 form.addEventListener('submit', async function (e) {
   e.preventDefault();
+  if (!validateRequiredFields({ focusFirst: true })) {
+    setFormNote('error', formText('form.validationTitle', 'Please complete the required fields'), formText('form.validationDetail', 'Check the highlighted field and try again.'));
+    return;
+  }
+
   if (!validatePhotos()) {
     projectPhotos.reportValidity();
     return;
@@ -374,6 +640,7 @@ form.addEventListener('submit', async function (e) {
     syncPhotoInputFiles();
     const formLanguage = document.getElementById('formLanguage');
     if (formLanguage) formLanguage.value = currentLang === 'es' ? 'Spanish' : 'English';
+    validateRequiredFields();
     validatePhotos();
     resetPhotoUploadCopy();
     setFormNote('success', formText('form.successTitle', 'Request sent successfully'), formText('form.successDetail', 'We received your quote request and will reply within 1-2 business days.'));
@@ -420,4 +687,7 @@ lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLigh
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape' && lightbox.classList.contains('open')) closeLightbox();
   if (e.key === 'Escape' && imageLightbox.classList.contains('open')) closeImageLightbox();
+  if (!imageLightbox.classList.contains('open')) return;
+  if (e.key === 'ArrowRight') showLightboxStep(1);
+  if (e.key === 'ArrowLeft') showLightboxStep(-1);
 });

@@ -24,7 +24,7 @@ body {
   line-height: 1.65;
 }
 a { color: inherit; }
-img { max-width: 100%; }
+img { max-width: 100%; height: auto; }
 .wrap { width: min(var(--max), calc(100% - 48px)); margin: auto; }
 
 .site-header {
@@ -180,6 +180,20 @@ img { max-width: 100%; }
 .field input:focus,
 .field select:focus,
 .field textarea:focus { border-color: var(--orange); outline: 3px solid rgba(255, 122, 26, .2); }
+.field.field-error input,
+.field.field-error select,
+.field.field-error textarea {
+  border-color: #a92e18;
+  background: #fff8f5;
+}
+.field-error-message {
+  display: block;
+  margin-top: 7px;
+  color: #a92e18;
+  font-size: .82rem;
+  font-weight: 800;
+  line-height: 1.35;
+}
 .field small { display: block; margin-top: 6px; color: var(--muted); }
 .photo-upload { position: relative; }
 .photo-upload input[type="file"] {
@@ -310,10 +324,35 @@ img { max-width: 100%; }
   outline: none;
 }
 .check { display: flex; gap: 10px; align-items: flex-start; margin: 17px 0; }
+.check.field-error { flex-wrap: wrap; }
+.check.field-error input { outline: 2px solid #a92e18; outline-offset: 2px; }
+.check .field-error-message {
+  flex: 0 0 100%;
+  margin-top: -4px;
+  margin-left: 28px;
+}
 
-.footer { background: var(--ink); color: #d8d5ce; padding: 38px 0; }
-.footer-row { display: flex; justify-content: space-between; gap: 25px; flex-wrap: wrap; }
-.footer a { color: #fff; }
+.footer {
+  background: var(--ink);
+  color: #d8d5ce;
+  padding: 38px 0;
+}
+.footer-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px 25px;
+  flex-wrap: wrap;
+  font-size: .84rem;
+}
+.footer-row span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.footer a {
+  color: #fff;
+  text-decoration: none;
+  transition: color .18s ease;
+}
 .footer a:hover { color: var(--orange); }
 .muted { color: var(--muted); }
 
@@ -335,6 +374,20 @@ img { max-width: 100%; }
   .section { padding: 56px 0; }
   .card,
   .quote-form { padding: 24px; box-shadow: 5px 5px 0 rgba(18, 18, 18, .08); }
+  .contact { padding: 50px 0; }
+  .footer {
+    padding: 30px 0 calc(28px + env(safe-area-inset-bottom, 0px));
+  }
+  .footer-row {
+    display: grid;
+    gap: 9px;
+    justify-content: stretch;
+  }
+  .footer a {
+    display: inline-flex;
+    min-height: 28px;
+    align-items: center;
+  }
 }
 
 @media (max-width: 430px) {

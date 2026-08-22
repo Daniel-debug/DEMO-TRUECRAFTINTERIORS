@@ -2,7 +2,8 @@
 .grid,
 .nav,
 .nav-links,
-.contact p {
+.contact p,
+.footer-row {
   min-width: 0;
 }
 
@@ -12,6 +13,9 @@
 }
 
 .contact a[href^="mailto:"],
+.footer a[href^="mailto:"],
+.footer-row span,
+.photo-list-name,
 .card,
 h1,
 h2,
@@ -28,6 +32,16 @@ li {
 
   .card,
   .quote-form {
+    width: 100%;
+  }
+
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+
+  .footer-row {
     width: 100%;
   }
 }
