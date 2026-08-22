@@ -1,0 +1,9 @@
+.git
+.github
+.assetsignore
+wrangler.toml
+worker.js
+functions
+tools
+ABRIR-SITIO-LOCAL.cmd
+*.ps1

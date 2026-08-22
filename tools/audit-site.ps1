@@ -72,6 +72,9 @@ $expectedAssets = @(
   'assets/js/main.js',
   'assets/js/quote-form.js',
   'functions/api/contact.js',
+  'worker.js',
+  'wrangler.toml',
+  '.assetsignore',
   'assets/reviews/review-wall-prep.png',
   'assets/reviews/review-commercial-hall.png',
   'assets/reviews/review-bathroom-durock.png'
