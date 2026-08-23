@@ -508,15 +508,13 @@
   <div class="seam" aria-hidden="true"></div>
 
 
-  <!-- ================= REVIEW PREVIEWS ================= -->
+  <!-- ================= REVIEWS ================= -->
   <section class="testimonials" id="testimonios">
     <div class="wrap">
       <div class="t-wrap">
         <div class="reveal">
           <span class="eyebrow" style="color:var(--orange-dark);" data-i18n="reviews.eyebrow">Reviews</span>
-          <div class="t-score"><span data-i18n="reviews.preview">Preview</span><span class="of5" data-i18n="reviews.layout">client review layout</span></div>
-          <div class="stars" aria-hidden="true">*****</div>
-          <p class="pending-note"><strong data-i18n="reviews.warning">These names and statements are previews. Replace them with verified client reviews before publishing.</strong></p>
+          <div class="stars" aria-hidden="true">★★★★★</div>
         </div>
         <div class="reveal">
           <div class="t-card" id="tCard">
@@ -527,16 +525,16 @@
               </button>
               <div class="t-proof-meta">
                 <div class="t-person"><span class="t-avatar" id="tAvatar">JR</span><span id="tName">J.R. &middot; South Suburbs</span></div>
-                <div class="t-job" id="tJob">Room drywall installation preview</div>
+                <div class="t-job" id="tJob">Room drywall installation</div>
               </div>
             </div>
             <p id="tQuote">&quot;The crew left the area clean every day, explained the timeline clearly, and the drywall finish was ready for paint without issues.&quot;</p>
-            <div class="who" id="tWho">Homeowner Review Preview</div>
+            <div class="who" id="tWho">Homeowner</div>
           </div>
           <div class="t-dots" id="tDots">
-            <button class="active" data-i="0" aria-label="Review preview 1"></button>
-            <button data-i="1" aria-label="Review preview 2"></button>
-            <button data-i="2" aria-label="Review preview 3"></button>
+            <button class="active" data-i="0" aria-label="Review 1"></button>
+            <button data-i="1" aria-label="Review 2"></button>
+            <button data-i="2" aria-label="Review 3"></button>
           </div>
         </div>
       </div>
@@ -638,16 +636,19 @@
 
           <div class="field">
             <label for="name" data-i18n="form.name">Full Name</label>
-            <input id="name" name="name" type="text" placeholder="Jane Doe" required>
+            <input id="name" name="name" type="text" placeholder="Jane Doe"
+              data-i18n-placeholder="form.namePlaceholder" required>
           </div>
           <div class="field-row">
             <div class="field">
               <label for="phone" data-i18n="form.phone">Phone</label>
-              <input id="phone" name="phone" type="tel" placeholder="(708) 000-0000" required>
+              <input id="phone" name="phone" type="tel" placeholder="(708) 000-0000"
+                data-i18n-placeholder="form.phonePlaceholder" required>
             </div>
             <div class="field">
               <label for="email" data-i18n="form.email">Email</label>
-              <input id="email" name="email" type="email" placeholder="you@email.com" required>
+              <input id="email" name="email" type="email" placeholder="you@email.com"
+                data-i18n-placeholder="form.emailPlaceholder" required>
             </div>
           </div>
           <div class="field">
@@ -811,7 +812,7 @@
     <button class="il-nav il-next" id="ilNext" type="button" aria-label="Next image">&#8250;</button>
     <div class="il-inner">
       <img id="ilImage" src="" alt="Expanded project review image">
-      <div class="il-caption" id="ilCaption">Project photo preview</div>
+      <div class="il-caption" id="ilCaption">Project photo</div>
     </div>
   </div>
 

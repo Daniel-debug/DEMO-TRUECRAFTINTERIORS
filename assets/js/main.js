@@ -156,7 +156,7 @@ const io = new IntersectionObserver((entries) => {
 document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 
 
-// Review preview rotator. Preview labels stay visible until verified reviews replace this content.
+// Client review rotator.
 let tIndex = 0;
 const tQuote = document.getElementById('tQuote');
 const tWho = document.getElementById('tWho');

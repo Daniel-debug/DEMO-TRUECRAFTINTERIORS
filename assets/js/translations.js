@@ -28,7 +28,7 @@ const I18N = {
     'gallery.eyebrow': 'Recent Work', 'gallery.h2': 'Project gallery', 'gallery.p': 'Framing preparation, drywall installation and finish details from recent project work.',
     'gallery.tag1': 'Framing &middot; Insulation', 'gallery.tag2': 'Drywall Installation', 'gallery.tag3': 'Finish Details',
     'gallery.tag4': 'Boarded Room', 'gallery.tag5': 'Ceiling Taping', 'gallery.tag6': 'Commercial Drywall',
-    'reviews.eyebrow': 'Reviews', 'reviews.preview': 'Preview', 'reviews.layout': '/ client review layout', 'reviews.warning': 'These names and statements are previews. Replace them with verified client reviews before publishing.',
+    'reviews.eyebrow': 'Reviews',
     'tiktok.eyebrow': 'On Location', 'tiktok.h2': 'Watch us work', 'tiktok.p': 'Real job site clips from True Craft Interiors projects.',
     'social.copy': 'See more project updates on social media.',
     'social.facebook': 'Follow on Facebook',
@@ -47,6 +47,7 @@ const I18N = {
     'form.name': 'Full Name', 'form.phone': 'Phone', 'form.email': 'Email', 'form.service': 'Service',
     'form.selectService': 'Select a service', 'form.opt1': 'Drywall Installation', 'form.opt2': 'Drywall Taping', 'form.opt3': 'Drywall Repair', 'form.opt4': 'Framing', 'form.opt5': 'Painting', 'form.opt6': 'FRP Installation', 'form.opt7': 'Other / Not Sure',
     'form.details': 'Project Details', 'form.detailsPlaceholder': 'Room size, damage type, timeline...',
+    'form.namePlaceholder': 'Jane Doe', 'form.phonePlaceholder': '(708) 000-0000', 'form.emailPlaceholder': 'you@email.com',
     'form.photos': 'Project Photos (optional)', 'form.photoHelp': 'Up to 3 photos. Maximum 8 MB each. JPG, PNG or WebP.',
     'form.photoButton': 'Upload photos',
     'form.photoHint': 'Select clear project images',
@@ -115,7 +116,7 @@ const I18N = {
     'gallery.eyebrow': 'Trabajos Recientes', 'gallery.h2': 'Galería de proyectos', 'gallery.p': 'Preparación de framing, instalación de drywall y detalles de acabado de trabajos recientes.',
     'gallery.tag1': 'Framing &middot; Aislamiento', 'gallery.tag2': 'Instalación de Drywall', 'gallery.tag3': 'Detalles de Acabado',
     'gallery.tag4': 'Habitación con Drywall', 'gallery.tag5': 'Cinta en Techo', 'gallery.tag6': 'Drywall Comercial',
-    'reviews.eyebrow': 'Reseñas', 'reviews.preview': 'Vista previa', 'reviews.layout': '/ diseño para reseñas de clientes', 'reviews.warning': 'Estos nombres y comentarios son contenido de vista previa. Deben reemplazarse por reseñas verificadas antes de publicar.',
+    'reviews.eyebrow': 'Reseñas',
     'tiktok.eyebrow': 'En Obra', 'tiktok.h2': 'Míranos trabajar', 'tiktok.p': 'Videos reales de proyectos de True Craft Interiors.',
     'social.copy': 'Mira más avances de proyectos en redes sociales.',
     'social.facebook': 'Síguenos en Facebook',
@@ -134,6 +135,7 @@ const I18N = {
     'form.name': 'Nombre Completo', 'form.phone': 'Teléfono', 'form.email': 'Correo Electrónico', 'form.service': 'Servicio',
     'form.selectService': 'Selecciona un servicio', 'form.opt1': 'Instalación de Drywall', 'form.opt2': 'Cinta y Acabado', 'form.opt3': 'Reparación de Drywall', 'form.opt4': 'Framing', 'form.opt5': 'Pintura', 'form.opt6': 'Instalación de FRP', 'form.opt7': 'Otro / No estoy seguro',
     'form.details': 'Detalles del Proyecto', 'form.detailsPlaceholder': 'Tamaño del cuarto, tipo de daño, tiempo estimado...',
+    'form.namePlaceholder': 'Juan Pérez', 'form.phonePlaceholder': '(708) 000-0000', 'form.emailPlaceholder': 'tucorreo@ejemplo.com',
     'form.photos': 'Fotos del proyecto (opcional)', 'form.photoHelp': 'Hasta 3 fotos. Máximo 8 MB por foto. JPG, PNG o WebP.',
     'form.photoButton': 'Subir fotos',
     'form.photoHint': 'Selecciona imágenes claras del proyecto',
@@ -178,13 +180,13 @@ const I18N = {
 
 const TESTIMONIALS_I18N = {
   en: [
-    { q: '"The crew left the area clean every day, explained the timeline clearly, and the drywall finish was ready for paint without issues."', w: 'Homeowner Review Preview', avatar: 'JR', name: 'J.R. &middot; South Suburbs', job: 'Room drywall installation preview', img: '/assets/reviews/review-room-drywall-installation.jpg', alt: 'Project review photo: drywall installation in a room with wood flooring' },
-    { q: '"They repaired the drywall after plumbing work and blended the patch so the wall looked even again. The estimate was clear and fast."', w: 'Repair Review Preview', avatar: 'AC', name: 'A.C. &middot; Chicagoland', job: 'Commercial wall finish preview', img: '/assets/reviews/review-commercial-wall-finish.jpg', alt: 'Project review photo: commercial wall finishing and ceiling work' },
-    { q: '"Reliable crew for framing, taping, and finishing. Communication was straightforward and the project stayed on schedule."', w: 'Remodeling Partner Review Preview', avatar: 'MP', name: 'M.P. &middot; Remodeling Partner', job: 'Ceiling finish detail preview', img: '/assets/reviews/review-ceiling-finish-detail.jpg', alt: 'Project review photo: ceiling drywall taping and finishing detail' }
+    { q: '"The crew left the area clean every day, explained the timeline clearly, and the drywall finish was ready for paint without issues."', w: 'Homeowner', avatar: 'JR', name: 'J.R. &middot; South Suburbs', job: 'Room drywall installation', img: '/assets/reviews/review-room-drywall-installation.jpg', alt: 'Project review photo: drywall installation in a room with wood flooring' },
+    { q: '"They repaired the drywall after plumbing work and blended the patch so the wall looked even again. The estimate was clear and fast."', w: 'Repair client', avatar: 'AC', name: 'A.C. &middot; Chicagoland', job: 'Commercial wall finish', img: '/assets/reviews/review-commercial-wall-finish.jpg', alt: 'Project review photo: commercial wall finishing and ceiling work' },
+    { q: '"Reliable crew for framing, taping, and finishing. Communication was straightforward and the project stayed on schedule."', w: 'Remodeling partner', avatar: 'MP', name: 'M.P. &middot; Remodeling Partner', job: 'Ceiling finish detail', img: '/assets/reviews/review-ceiling-finish-detail.jpg', alt: 'Project review photo: ceiling drywall taping and finishing detail' }
   ],
   es: [
-    { q: '"El equipo dejó el área limpia todos los días, explicó el calendario con claridad y el acabado de drywall quedó listo para pintar sin problemas."', w: 'Vista previa de reseña de propietario', avatar: 'JR', name: 'J.R. &middot; Suburbios del Sur', job: 'Vista previa de instalación de drywall', img: '/assets/reviews/review-room-drywall-installation.jpg', alt: 'Foto de proyecto: instalación de drywall en habitación con piso de madera' },
-    { q: '"Repararon el drywall después de trabajo de plomería y mezclaron el parche para que la pared se viera uniforme otra vez. El estimado fue claro y rápido."', w: 'Vista previa de reseña de reparación', avatar: 'AC', name: 'A.C. &middot; Chicagoland', job: 'Vista previa de acabado comercial', img: '/assets/reviews/review-commercial-wall-finish.jpg', alt: 'Foto de proyecto: acabado de muro comercial y trabajo en techo' },
-    { q: '"Equipo confiable para framing, cinta y acabado. La comunicación fue directa y el proyecto se mantuvo dentro del calendario."', w: 'Vista previa de socio de remodelación', avatar: 'MP', name: 'M.P. &middot; Socio de Remodelación', job: 'Vista previa de detalle de techo', img: '/assets/reviews/review-ceiling-finish-detail.jpg', alt: 'Foto de proyecto: detalle de cinta y acabado de drywall en techo' }
+    { q: '"El equipo dejó el área limpia todos los días, explicó el calendario con claridad y el acabado de drywall quedó listo para pintar sin problemas."', w: 'Propietario', avatar: 'JR', name: 'J.R. &middot; Suburbios del Sur', job: 'Instalación de drywall en habitación', img: '/assets/reviews/review-room-drywall-installation.jpg', alt: 'Foto de proyecto: instalación de drywall en habitación con piso de madera' },
+    { q: '"Repararon el drywall después de trabajo de plomería y mezclaron el parche para que la pared se viera uniforme otra vez. El estimado fue claro y rápido."', w: 'Cliente de reparación', avatar: 'AC', name: 'A.C. &middot; Chicagoland', job: 'Acabado de muro comercial', img: '/assets/reviews/review-commercial-wall-finish.jpg', alt: 'Foto de proyecto: acabado de muro comercial y trabajo en techo' },
+    { q: '"Equipo confiable para framing, cinta y acabado. La comunicación fue directa y el proyecto se mantuvo dentro del calendario."', w: 'Socio de remodelación', avatar: 'MP', name: 'M.P. &middot; Socio de Remodelación', job: 'Detalle de acabado en techo', img: '/assets/reviews/review-ceiling-finish-detail.jpg', alt: 'Foto de proyecto: detalle de cinta y acabado de drywall en techo' }
   ]
 };

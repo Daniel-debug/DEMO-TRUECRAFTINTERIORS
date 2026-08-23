@@ -1,6 +1,6 @@
 # True Craft Interiors - Project Handoff
 
-Last updated: 2026-08-22
+Last updated: 2026-08-23
 
 This document is intended for another developer or AI agent that needs to understand the project quickly without reading the full conversation history.
 
@@ -118,7 +118,10 @@ run_worker_first = ["/api/*"]
 .assetsignore
 ```
 
-Controls which files are excluded from static asset upload.
+Controls which files are excluded from static asset upload. Because `wrangler.toml` sets
+`directory = "."`, anything not listed here is published publicly. `*.md` is excluded on
+purpose so these internal documents are not served at
+`truecraftinteriorschicago.com/PROJECT_HANDOFF.md`. Do not remove that line.
 
 ```text
 sitemap.xml
@@ -401,7 +404,10 @@ Behavior:
 
 ### Reviews
 
-Reviews are marked as preview/fake until replaced with verified client reviews.
+The three homepage reviews are real client reviews, confirmed by the business owner on
+2026-08-23. The previous "Preview" labels, the visible warning note, and the ASCII asterisk
+rating were removed on that date. Review text lives in `TESTIMONIALS_I18N` in
+`assets/js/translations.js`; the `en` and `es` arrays must always be updated together.
 
 Current review image assets:
 
@@ -423,6 +429,112 @@ Review card behavior:
 The homepage includes embedded Cloudinary/player videos in the "Watch us work" section.
 
 The videos are hosted externally through Cloudinary and displayed in a custom-styled section.
+
+## Which Files Are Generated
+
+This matters before editing anything. Of the 19 pages, **17 are generated** by
+`tools/generate-seo-pages.ps1`. Editing a generated file appears to work and is silently lost
+the next time the script runs.
+
+Edited by hand:
+
+```text
+index.html                  the real product; the source everything else derives from
+es/cotizacion/index.html    standalone Spanish quote page
+404.html                    not-found page
+```
+
+Generated - do not edit directly:
+
+```text
+es/index.html                       generated from index.html
+services/, service-areas/           SEO landing pages
+es/servicios/, es/areas-de-servicio/
+6 English service pages             drywall-installation/, drywall-repair/,
+6 Spanish service pages             drywall-taping-finishing/, interior-framing/,
+                                    painting/, frp-installation/ and their /es/ pairs
+```
+
+`es/index.html` is generated, but it is not an SEO-only page: it is the full Spanish product,
+same design and same features as the English homepage. The other 16 generated pages are search
+landing pages built on `seo-pages.css`, intentionally simpler, and the homepage navigation does
+not send ordinary visitors into them.
+
+## How To Change Text
+
+### Step 0 - decide which file owns the text
+
+- Homepage text, English or Spanish: the source is `index.html`.
+- Service page text: the source is the `$services` table at the top of
+  `tools/generate-seo-pages.ps1` (fields `enLead` / `esLead` / `enBody` / `esBody`).
+- Shared service-page copy (headings, the "How to start" list, footer): the `if($isEs){...}`
+  expressions inside the `PageHtml` function in the same script.
+
+### Step 1 - find out whether the text has a dictionary entry
+
+Search the whole folder for a fragment of the text. Two results means it is translated text:
+one in the HTML, one in `assets/js/translations.js`. Look at the element that wraps it:
+
+```html
+<p class="lead" data-i18n="hero.lead">Family-rooted drywall, taping, repair...
+```
+
+`hero.lead` is the dictionary key. Text with a `data-i18n` attribute lives in two places and
+both must change, otherwise the browser overwrites the HTML with the old dictionary value as
+soon as the page loads.
+
+Text without `data-i18n` (a phone number, an `aria-label`, an `alt`) lives only in the HTML.
+
+### Step 2 - edit the HTML
+
+Replace the text between the tags in `index.html`. **Keep the `data-i18n` attribute.** Removing
+it breaks the language switcher for that element.
+
+### Step 3 - edit the dictionary
+
+In `assets/js/translations.js`, search for the key. It appears **twice**: the first occurrence
+is inside `I18N.en`, the second inside `I18N.es`. Change both. Watch the surrounding single
+quotes and the trailing comma - a broken quote here breaks all JavaScript on the page, not just
+the translation.
+
+Reviews are separate: they live in `TESTIMONIALS_I18N` (`en` and `es` arrays), and their default
+values are also in `index.html` as `#tQuote`, `#tName`, `#tWho`, `#tJob`.
+
+### Step 4 - regenerate
+
+```powershell
+powershell -ExecutionPolicy Bypass -File tools\generate-seo-pages.ps1
+```
+
+Expected output: `157 textos traducidos` and `31/31 cadenas de atributos`. A lower count or any
+`WARNING` means a key or an override string went stale - fix it before committing.
+
+Attribute strings (`aria-label`, `alt`, gallery captions) additionally need their entry in
+`$spanishAttributeOverrides` updated to match the new English string.
+
+### Step 5 - verify
+
+```powershell
+node --check assets\js\translations.js
+node --check assets\js\main.js
+powershell -ExecutionPolicy Bypass -File tools\audit-site.ps1
+```
+
+Then open the site locally (`ABRIR-SITIO-LOCAL.cmd`), check `/` and `/es/`, and use the language
+switcher in both directions.
+
+### Step 6 - review the diff before committing
+
+A homepage text change should touch exactly three files: `index.html`,
+`assets/js/translations.js` and `es/index.html`. Any other generated page showing up in
+`git status` means something changed that was not intended.
+
+### The mistake that costs the most
+
+Editing `es/index.html` directly. It is tempting because it is the file where the Spanish text is
+visible, and it works: save, reload, looks right. Weeks later someone runs the generator and the
+work disappears with no error message. Every change for the Spanish version goes into
+`index.html` and the dictionary.
 
 ## Local Development
 
@@ -484,6 +596,39 @@ node --check assets\js\quote-form.js
 
 Note: in some sandboxed environments, `node --check` may need to run outside the sandbox because resolving `C:\Users\el_da` can fail with `EPERM`.
 
+## Spanish Homepage Generation
+
+`es/index.html` is generated from `index.html` by `tools/generate-seo-pages.ps1`, so both pages
+stay structurally identical. The script runs three passes on the copy:
+
+1. head/meta swaps: `lang`, `title`, `description`, `canonical`, `og:*`.
+2. Spanish text: every `data-i18n` element and every `data-i18n-placeholder` gets its Spanish
+   value written into the HTML, read from `I18N.es` in `assets/js/translations.js`. That is the
+   same source the browser uses, so the generated HTML and the runtime translation cannot drift.
+   The `data-i18n` attributes are preserved, so the language switcher keeps working in both
+   directions.
+3. Attribute strings the runtime translator never touches: `aria-label`, `alt`, `title`,
+   gallery captions and the review card defaults. These live in `$spanishAttributeOverrides`
+   near the end of the script.
+
+Why pass 2 exists: crawlers that do not execute JavaScript would otherwise read `/es/` in
+English, and `/` and `/es/` were 96.8% identical in the raw HTML, which risks the Spanish page
+being treated as a duplicate of the English one.
+
+Maintenance rules:
+
+- Adding a translatable string means adding the key to **both** `I18N.en` and `I18N.es`, then
+  re-running the script.
+- Adding or changing an `aria-label`, `alt` or gallery caption in `index.html` means adding the
+  matching entry to `$spanishAttributeOverrides`. The script prints
+  `NN/NN cadenas de atributos traducidas` and warns for every string it could not find, so a
+  count below the total means an override went stale.
+- The script rewrites all 19 pages. Re-running it with no source changes reproduces the other
+  18 byte for byte, so `git status` after a run should only ever show `es/index.html`.
+- Known remaining English: the JSON-LD block on `/es/` (business description and service names
+  in `Offer` entries). Structured data in English is acceptable, but it can be added to the
+  override list if the client wants it localized.
+
 ## Git Workflow Used
 
 Typical workflow:
@@ -509,7 +654,8 @@ main
 
 ## Known Local Cleanup Note
 
-There may be untracked local image files in:
+These local image files are intentionally not tracked, and `.gitignore` now keeps them out of
+`git status`:
 
 ```text
 assets/reviews/review-drywall-bathroom.jpg
@@ -517,9 +663,35 @@ assets/reviews/review-drywall-installation.jpg
 assets/reviews/review-room-under-construction.jpg
 ```
 
-They were not committed because the current public pages do not reference them.
-
 Do not add them unless they are intentionally selected for gallery/reviews.
+
+Separately, three committed PNGs in `assets/reviews/` are not referenced by any HTML, CSS or
+JS file and add roughly 1.6 MB to every deployment:
+
+```text
+assets/reviews/review-bathroom-durock.png     (345 KB)
+assets/reviews/review-commercial-hall.png     (716 KB)
+assets/reviews/review-wall-prep.png           (605 KB)
+```
+
+They can be removed with `git rm` once confirmed they are not planned for future use.
+
+## Open Items
+
+1. ~~Spanish page is not pre-translated in the HTML.~~ **Resolved 2026-08-23.**
+   `tools/generate-seo-pages.ps1` now writes the Spanish text into `es/index.html` when it
+   generates the page. See "Spanish Homepage Generation" below. Visible-text overlap between
+   `/` and `/es/` dropped from 96.8% to 20.3%.
+
+2. **`MAIL_FROM` falls back to `onboarding@resend.dev`.** That is Resend's testing sender.
+   Production delivery needs a verified sending domain. Deferred: the business does not
+   currently have email on its own domain.
+
+3. **404 page is English only** and there is no `/es/404`. A Spanish visitor hitting a bad URL
+   gets the English page.
+
+4. **`/es/cotizacion/` has no English equivalent** and is linked only from the Spanish SEO
+   pages, not from `/es/` itself.
 
 ## Important Implementation Cautions
 

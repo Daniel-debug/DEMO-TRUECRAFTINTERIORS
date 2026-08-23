@@ -1,0 +1,8 @@
+# Imagenes de resena que quedaron sin uso en el sitio.
+# Ninguna pagina las referencia; se dejan fuera del repo a proposito.
+assets/reviews/review-drywall-bathroom.jpg
+assets/reviews/review-drywall-installation.jpg
+assets/reviews/review-room-under-construction.jpg
+
+# Helper local para commitear. No forma parte del sitio.
+/COMMIT-CAMBIOS.cmd

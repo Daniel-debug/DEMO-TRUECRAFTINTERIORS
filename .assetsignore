@@ -1,9 +1,11 @@
 .git
 .github
+.gitignore
 .assetsignore
 wrangler.toml
 worker.js
 functions
 tools
-ABRIR-SITIO-LOCAL.cmd
+*.cmd
 *.ps1
+*.md

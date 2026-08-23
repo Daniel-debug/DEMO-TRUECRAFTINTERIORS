@@ -872,21 +872,6 @@ section {
   overflow-wrap: anywhere;
 }
 
-.pending-note {
-  max-width: 40ch;
-  margin-top: 10px;
-  color: #111;
-  font-size: 0.95rem;
-  line-height: 1.55;
-  font-weight: 900;
-  overflow-wrap: anywhere;
-}
-
-.pending-note strong {
-  color: #111;
-  font-weight: 900;
-}
-
 .stars {
   color: var(--orange);
   font-size: 1.1rem;
@@ -2717,11 +2702,6 @@ header {
   .t-score .of5 {
     font-size: 0.92rem;
     line-height: 1.35;
-  }
-
-  .pending-note {
-    max-width: 100%;
-    font-size: 0.9rem;
   }
 
   .testimonials {

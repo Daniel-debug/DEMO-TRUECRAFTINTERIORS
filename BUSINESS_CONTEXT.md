@@ -1,6 +1,6 @@
 # True Craft Interiors - Business and Content Context
 
-Last updated: 2026-08-22
+Last updated: 2026-08-23
 
 This document summarizes the business context, content direction, and messaging decisions for the True Craft Interiors website.
 
@@ -206,15 +206,18 @@ Too many images can make the homepage feel heavy, especially on mobile.
 
 ## Reviews Section
 
-Current reviews are preview/fake placeholders.
+The three reviews on the homepage are **real client reviews**, confirmed by the business owner
+on 2026-08-23. They are published using client initials plus area (J.R. / A.C. / M.P.), which is
+the permission level agreed with the client.
 
-The site explicitly labels them as previews until verified client reviews are available.
+Earlier versions of this project treated them as preview placeholders and the site displayed
+"Preview" labels plus a visible warning note. That scaffolding was removed on 2026-08-23:
+the section now presents them as ordinary client reviews.
 
-Important:
+If review text or names ever change, they live in `TESTIMONIALS_I18N` inside
+`assets/js/translations.js` (both `en` and `es` arrays must be updated together).
 
-Replace fake review text and names with verified real client reviews before final public/client launch if possible.
-
-The review section was designed to feel more credible by pairing each review with a project photo preview.
+Each review is paired with a real project photo to make the section more credible.
 
 Current interaction:
 
@@ -226,20 +229,20 @@ Current interaction:
 
 Recommended next step:
 
-Ask the client for:
+The section holds three reviews today. To strengthen it, ask the client for:
 
-- 3 to 6 real reviews
-- permission to use first name/initials
+- up to 3 additional real reviews
+- permission to use first name/initials (already granted for the current three)
 - city or area if allowed
 - project type
 - matching project photo if available
 
 ## Social Media
 
-Facebook profile:
+Facebook profile (this is the exact URL used in the site markup):
 
 ```text
-https://www.facebook.com/profile.php?id=61591278734624
+https://www.facebook.com/people/True-Craft-Interiors-Chicago/61591278734624/
 ```
 
 TikTok:
@@ -316,6 +319,20 @@ For final polish, ask the client:
 9. Should the form route emails to one address or multiple addresses?
 10. Should uploaded photos be deleted from Cloudinary after a set period?
 
+## Where Content Lives
+
+Before editing any copy, read "Which Files Are Generated" and "How To Change Text" in
+`PROJECT_HANDOFF.md`. Most pages of this site are generated from `index.html` and a translation
+dictionary, so editing the page where you see the text is usually the wrong move and the change
+gets overwritten later.
+
+Quick map:
+
+- Homepage copy, English and Spanish: `index.html` plus `I18N.en` / `I18N.es` in
+  `assets/js/translations.js`.
+- Client reviews: `TESTIMONIALS_I18N` in `assets/js/translations.js`.
+- Service page copy: the `$services` table in `tools/generate-seo-pages.ps1`.
+
 ## Content Style Guide
 
 English tone:
@@ -349,8 +366,18 @@ These claims should be verified with the client:
 - 1-year workmanship warranty
 - 25+ years hands-on experience
 - 40+ years family drywall knowledge
+- "Serving Chicagoland since 2010" (appears in the homepage trust badges and in all 16 SEO
+  pages as "Family-rooted since 2010" / "desde 2010"; note it sits next to the 25+ years
+  claim, so confirm which date refers to the company and which to personal experience)
 - service areas
 - business hours
 - exact phone/email
 - exact social media URLs
+
+## Language Priority
+
+The primary audience is English-speaking (Chicagoland). English is the default language:
+`/` is the canonical entry point and carries `hreflang="x-default"`. Spanish support at `/es/`
+stays fully maintained as a secondary language for the bilingual portion of the market, but
+optimization effort is prioritized for English.
 
