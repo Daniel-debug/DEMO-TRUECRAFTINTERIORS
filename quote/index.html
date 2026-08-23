@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Free Quote | True Craft Interiors</title>
+  <meta name="description" content="Request a free estimate for drywall installation, taping, repair, framing, painting or FRP for your project in Chicagoland or Northwest Indiana.">
+  <meta name="robots" content="index,follow,max-image-preview:large">
+  <meta name="theme-color" content="#121212">
+  <link rel="canonical" href="https://truecraftinteriorschicago.com/quote/">
+  <link rel="alternate" hreflang="en-US" href="https://truecraftinteriorschicago.com/quote/">
+  <link rel="alternate" hreflang="es-US" href="https://truecraftinteriorschicago.com/es/cotizacion/">
+  <link rel="alternate" hreflang="x-default" href="https://truecraftinteriorschicago.com/quote/">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:locale:alternate" content="es_US">
+  <meta property="og:site_name" content="True Craft Interiors">
+  <meta property="og:title" content="Free Quote | True Craft Interiors">
+  <meta property="og:description" content="Send your project details and up to 3 photos to request a free estimate.">
+  <meta property="og:url" content="https://truecraftinteriorschicago.com/quote/">
+  <meta property="og:image" content="https://truecraftinteriorschicago.com/assets/logo.png">
+  <link rel="icon" type="image/png" href="/assets/logo.png">
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" href="/assets/logo.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Big+Shoulders:wght@500;700;800;900&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+  <link rel="stylesheet" href="/assets/css/seo-pages.css">
+  <link rel="stylesheet" href="/assets/css/mobile-fixes.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap nav">
+      <a class="brand" href="/">
+        <img src="/assets/logo.png" alt="True Craft Interiors logo">
+        <span>TRUE CRAFT INTERIORS</span>
+      </a>
+      <nav class="nav-links" aria-label="Main navigation">
+        <a href="/#servicios">Services</a>
+        <a href="/service-areas/">Service Areas</a>
+        <a href="/es/cotizacion/" hreflang="es-US">Español</a>
+        <a class="button" href="tel:17089838587">Call</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="wrap">
+        <div class="crumbs"><a href="/">True Craft Interiors</a> / Free Quote</div>
+        <span class="eyebrow">Free estimate · 1–2 business days</span>
+        <h1>Tell us about your project</h1>
+        <p>Send the details and up to 3 photos. You can also call or text (708) 983-8587.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap two">
+        <div>
+          <h2>Quote request</h2>
+          <p>We answer in English and Spanish. For larger projects we can arrange an in-person visit.</p>
+          <p><strong>Hours:</strong> 7:00 AM–7:00 PM<br><strong>Email:</strong> <a href="mailto:truecraftinteriors1@gmail.com">truecraftinteriors1@gmail.com</a></p>
+        </div>
+
+        <form class="quote-form" id="quoteForm" action="/api/contact" method="post" enctype="multipart/form-data" novalidate>
+          <input type="hidden" name="source" value="truecraftinteriorschicago.com/quote/">
+          <input type="hidden" name="language" value="English">
+          <div style="position:absolute;left:-9999px;" aria-hidden="true">
+            <label for="companyWebsite">Company website</label>
+            <input id="companyWebsite" name="company_website" type="text" tabindex="-1" autocomplete="off">
+          </div>
+          <div class="field">
+            <label for="name">Full name</label>
+            <input id="name" name="name" autocomplete="name" required>
+          </div>
+          <div class="field">
+            <label for="phone">Phone</label>
+            <input id="phone" name="phone" type="tel" autocomplete="tel" required>
+          </div>
+          <div class="field">
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" autocomplete="email" required>
+          </div>
+          <div class="field">
+            <label for="service">Service</label>
+            <select id="service" name="service" required>
+              <option value="">Select a service</option>
+              <option>Drywall Installation</option>
+              <option>Drywall Taping</option>
+              <option>Drywall Repair</option>
+              <option>Framing</option>
+              <option>Painting</option>
+              <option>FRP Installation</option>
+              <option>Other / Not Sure</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="details">Project details</label>
+            <textarea id="details" name="details" rows="4" required></textarea>
+          </div>
+          <div class="field">
+            <label for="photos">Photos (optional)</label>
+            <div class="photo-upload">
+              <input id="photos" name="project_photos[]" type="file" accept="image/jpeg,image/png,image/webp" multiple>
+              <label class="photo-upload-label" for="photos">
+                <span class="photo-upload-icon" aria-hidden="true">+</span>
+                <span class="photo-upload-copy">
+                  <strong>Upload photos</strong>
+                  <small>Select clear project images</small>
+                </span>
+              </label>
+            </div>
+            <small id="photoStatus">Up to 3 photos. Maximum 8 MB each. JPG, PNG or WebP.</small>
+          </div>
+          <label class="check">
+            <input type="checkbox" name="contact_consent" value="yes" required>
+            <span>I agree that True Craft Interiors may contact me about this quote request.</span>
+          </label>
+          <button class="button" type="submit">Send Request</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap footer-row">
+      <span>© 2026 True Craft Interiors</span>
+      <span>7:00 AM–7:00 PM · English &amp; Spanish</span>
+      <span>Designed by helloromina.mx</span>
+    </div>
+  </footer>
+
+  <script src="/assets/js/translations.js"></script>
+  <script src="/assets/js/quote-form.js"></script>
+</body>
+</html>

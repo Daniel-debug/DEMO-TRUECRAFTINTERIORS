@@ -215,7 +215,13 @@ Responsibilities:
 assets/js/quote-form.js
 ```
 
-Standalone form logic for `/es/cotizacion/`. It mirrors the validation and photo behavior used on the homepage form, but text is hardcoded in Spanish.
+Form logic shared by the two standalone quote pages, `/quote/` (English) and `/es/cotizacion/`
+(Spanish). It mirrors the validation and photo behavior of the homepage form. All of its text
+comes from `I18N` in `assets/js/translations.js`, picked by `document.documentElement.lang`, so
+the file holds no copy of its own.
+
+Two requirements for any page that uses it: `translations.js` must be loaded **before** it, and
+the form must carry `class="quote-form"` (the script finds the form by that class, not by id).
 
 ## Backend / Contact API
 
@@ -440,6 +446,7 @@ Edited by hand:
 
 ```text
 index.html                  the real product; the source everything else derives from
+quote/index.html            standalone English quote page
 es/cotizacion/index.html    standalone Spanish quote page
 404.html                    not-found page
 ```
@@ -629,6 +636,44 @@ Maintenance rules:
   in `Offer` entries). Structured data in English is acceptable, but it can be added to the
   override list if the client wants it localized.
 
+## One Visual System, Two Stylesheets
+
+`assets/css/main.css` styles the two homepages. `assets/css/seo-pages.css` styles everything
+else: the 16 SEO pages, `/quote/`, `/es/cotizacion/` and `404.html`.
+
+Two files, but **one visual language**. On 2026-08-23 the values in `seo-pages.css` were aligned
+to `main.css` so the internal pages stop looking like a different site. What changed:
+
+```text
+header          dark with orange border     ->  light (--paper), 3px --ink bottom border
+brand           58px square logo, upright   ->  38px circular logo, italic, 1.42rem
+nav links       white uppercase 0.82rem     ->  dark 0.86rem, orange underline on hover
+button          min-height 48, 2px border,  ->  padding 13px 24px, radius 2px, white text,
+                black text, white on hover      hover to --orange-dark; same as .btn
+hero h1         clamp(3.2rem -> 6.8rem)     ->  clamp(2.6rem -> 4.4rem)
+section h2      clamp(2.5rem -> 4.7rem)     ->  clamp(2rem -> 2.9rem)
+headings        weight 900, spacing -.02em  ->  weight 800, spacing .01em, line-height .95
+container       1180px, padding 24          ->  1240px, padding 28 (18 on mobile)
+section pad     78px                        ->  88px (56px on mobile)
+footer          #d8d5ce, padding 38px       ->  #B7B4AC, padding 60px 0 26px
+body            line-height 1.65            ->  1.55
+fonts           @import inside the CSS      ->  <link> + preconnect in each page head
+font fallback   'Big Shoulders', Impact     ->  'Big Shoulders', sans-serif
+```
+
+The class names still differ between the two files (`.button` vs `.btn`, `.brand` vs `.logo`,
+`.footer` vs `footer`) because the two systems grew separately. Renaming them would mean
+rewriting the markup the generator emits and pulling `main.js` into pages that today need no
+JavaScript, so the names were left alone and only the values were aligned. Class names are not
+visible to users; the rendered result is.
+
+**If you change any value in that list inside `main.css`, change it in `seo-pages.css` too.**
+The header comment of `seo-pages.css` repeats the list for whoever opens that file first.
+
+Why keep a separate, smaller file: `seo-pages.css` is about 11 KB against 53 KB for `main.css`,
+and these are search landing pages where load time converts. They also do not need the
+homepage's gallery lightbox, review carousel, scroll animations or mobile bar.
+
 ## Git Workflow Used
 
 Typical workflow:
@@ -690,8 +735,10 @@ They can be removed with `git rm` once confirmed they are not planned for future
 3. **404 page is English only** and there is no `/es/404`. A Spanish visitor hitting a bad URL
    gets the English page.
 
-4. **`/es/cotizacion/` has no English equivalent** and is linked only from the Spanish SEO
-   pages, not from `/es/` itself.
+4. ~~`/es/cotizacion/` has no English equivalent.~~ **Resolved 2026-08-23.** `/quote/` is the
+   English mirror, and the 8 English SEO pages now point their three "Free Quote" links at it
+   instead of `/#contacto`. Neither quote page is linked from its own homepage; both are reached
+   from the SEO pages and from search.
 
 ## Important Implementation Cautions
 
@@ -704,7 +751,7 @@ They can be removed with `git rm` once confirmed they are not planned for future
   - Spanish homepage HTML
   - `assets/js/main.js`
   - `functions/api/contact.js`
-  - `assets/js/quote-form.js` if the standalone Spanish quote page is affected
+  - `assets/js/quote-form.js` if either standalone quote page is affected
 - If adding new pages, update:
   - `sitemap.xml`
   - `tools/audit-site.ps1` if new required assets or route expectations are introduced

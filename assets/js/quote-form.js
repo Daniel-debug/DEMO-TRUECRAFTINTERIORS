@@ -1,6 +1,17 @@
+// Standalone quote page form (/quote/ and /es/cotizacion/).
+// Text comes from I18N in assets/js/translations.js, so this file has no copy of
+// its own to keep in sync. translations.js must be loaded before this script.
+const quoteLang = document.documentElement.lang === 'es' ? 'es' : 'en';
+const quoteDict = (typeof I18N !== 'undefined' && I18N[quoteLang]) || {};
+
+function t(key, fallback) {
+  const value = quoteDict[key];
+  return value === undefined ? fallback : value;
+}
+
 const photos = document.getElementById('photos');
 const photoStatus = document.getElementById('photoStatus');
-const form = document.getElementById('quoteFormEs');
+const form = document.querySelector('form.quote-form');
 const submitButton = form.querySelector('button[type="submit"]');
 const photoUpload = photos?.closest('.photo-upload');
 const photoUploadIcon = photoUpload?.querySelector('.photo-upload-icon');
@@ -21,7 +32,7 @@ function getFieldContainer(field) {
 
 function getFieldName(field) {
   const label = field.id ? form.querySelector(`label[for="${field.id}"]`) : null;
-  return label?.textContent.trim() || field.name || 'Este campo';
+  return label?.textContent.trim() || field.name || (quoteLang === 'es' ? 'Este campo' : 'This field');
 }
 
 function getFieldErrorElement(field) {
@@ -56,9 +67,9 @@ function setFieldError(field, message) {
 }
 
 function getFieldErrorMessage(field) {
-  if (field.type === 'checkbox' && !field.checked) return 'Acepta el consentimiento antes de enviar.';
-  if (field.validity.valueMissing) return `${getFieldName(field)} es requerido.`;
-  if (field.type === 'email' && field.validity.typeMismatch) return 'Ingresa un correo electrónico válido.';
+  if (field.type === 'checkbox' && !field.checked) return t('form.requiredConsent', 'Please agree before sending the request.');
+  if (field.validity.valueMissing) return t('form.requiredField', '{field} is required.').replace('{field}', getFieldName(field));
+  if (field.type === 'email' && field.validity.typeMismatch) return t('form.invalidEmail', 'Enter a valid email address.');
   return '';
 }
 
@@ -113,12 +124,12 @@ function renderPhotoList(files) {
 
     const name = document.createElement('span');
     name.className = 'photo-list-name';
-    name.textContent = file.name || 'Foto del proyecto';
+    name.textContent = file.name || t('form.photoFallbackName', 'Project photo');
 
     const remove = document.createElement('button');
     remove.type = 'button';
     remove.className = 'photo-list-remove';
-    remove.setAttribute('aria-label', 'Quitar foto');
+    remove.setAttribute('aria-label', t('form.photoRemove', 'Remove photo'));
     remove.textContent = '×';
     remove.addEventListener('click', () => {
       selectedPhotoFiles.splice(index, 1);
@@ -133,8 +144,8 @@ function renderPhotoList(files) {
 
 function resetPhotoUploadCopy() {
   if (photoUploadIcon) photoUploadIcon.textContent = '+';
-  if (photoUploadTitle) photoUploadTitle.textContent = 'Subir fotos';
-  if (photoUploadHint) photoUploadHint.textContent = 'Selecciona imágenes claras del proyecto';
+  if (photoUploadTitle) photoUploadTitle.textContent = t('form.photoButton', 'Upload photos');
+  if (photoUploadHint) photoUploadHint.textContent = t('form.photoHint', 'Select clear project images');
 }
 
 function updatePhotoUploadUI(files, message) {
@@ -144,7 +155,7 @@ function updatePhotoUploadUI(files, message) {
 
   if (message) {
     if (photoUploadIcon) photoUploadIcon.textContent = '!';
-    if (photoUploadTitle) photoUploadTitle.textContent = 'Revisa tus fotos';
+    if (photoUploadTitle) photoUploadTitle.textContent = t('form.photoProblemTitle', 'Check your photos');
     if (photoUploadHint) photoUploadHint.textContent = message;
     return;
   }
@@ -154,21 +165,32 @@ function updatePhotoUploadUI(files, message) {
     return;
   }
 
-  const firstName = files[0].name || 'Foto del proyecto';
+  const firstName = files[0].name || t('form.photoFallbackName', 'Project photo');
   const extraCount = files.length - 1;
   if (photoUploadIcon) photoUploadIcon.textContent = '✓';
-  if (photoUploadTitle) photoUploadTitle.textContent = files.length === 1 ? '1 foto seleccionada' : `${files.length} fotos seleccionadas`;
-  if (photoUploadHint) photoUploadHint.textContent = extraCount > 0 ? `${firstName} + ${extraCount} más` : firstName;
+  if (photoUploadTitle) {
+    photoUploadTitle.textContent = files.length === 1
+      ? t('form.photoSelectedSingular', '1 photo selected')
+      : t('form.photoSelectedPlural', '{count} photos selected').replace('{count}', files.length);
+  }
+  if (photoUploadHint) {
+    const moreLabel = extraCount === 1
+      ? t('form.photoMoreSingular', 'more')
+      : t('form.photoMorePlural', 'more');
+    photoUploadHint.textContent = extraCount > 0 ? `${firstName} + ${extraCount} ${moreLabel}` : firstName;
+  }
 }
 
 function validatePhotos() {
   const files = [...(photos.files || [])];
   let message = '';
-  if (files.length > 3) message = 'Selecciona un máximo de 3 fotos.';
-  else if (files.some(file => file.size > maxPhotoBytes)) message = 'Cada foto debe pesar 8 MB o menos.';
-  else if (files.some(file => !allowedPhotoTypes.includes(file.type))) message = 'Solo se aceptan imágenes JPG, PNG o WebP.';
+  if (files.length > 3) message = t('form.photoCountError', 'Please choose no more than 3 photos.');
+  else if (files.some(file => file.size > maxPhotoBytes)) message = t('form.photoSizeError', 'Each photo must be 8 MB or smaller.');
+  else if (files.some(file => !allowedPhotoTypes.includes(file.type))) message = t('form.photoTypeError', 'Only JPG, PNG and WebP images are accepted.');
   photos.setCustomValidity(message);
-  photoStatus.textContent = message || (files.length ? 'Las fotos se adjuntarán al enviar la solicitud.' : 'Hasta 3 fotos; máximo 8 MB por foto.');
+  photoStatus.textContent = message || (files.length
+    ? t('form.photoAttachNote', 'Photos will be attached when you send the request.')
+    : t('form.photoHelp', 'Up to 3 photos. Maximum 8 MB each. JPG, PNG or WebP.'));
   photoStatus.classList.remove('success', 'sending');
   photoStatus.classList.toggle('error', Boolean(message));
   updatePhotoUploadUI(files, message);
@@ -186,12 +208,22 @@ form.querySelectorAll('[required]').forEach(field => {
   field.addEventListener(eventName, () => setFieldError(field, getFieldErrorMessage(field)));
 });
 
+function statusMessage(titleKey, titleFallback, detailKey, detailFallback) {
+  photoStatus.replaceChildren();
+  const title = document.createElement('strong');
+  title.textContent = t(titleKey, titleFallback);
+  const detail = document.createElement('span');
+  detail.textContent = t(detailKey, detailFallback);
+  photoStatus.append(title, detail);
+}
+
 form.addEventListener('submit', async event => {
   event.preventDefault();
   if (!validateRequiredFields({ focusFirst: true })) {
     photoStatus.classList.remove('sending', 'success');
     photoStatus.classList.add('error');
-    photoStatus.innerHTML = '<strong>Completa los campos requeridos.</strong><span>Revisa el campo marcado e inténtalo de nuevo.</span>';
+    statusMessage('form.validationTitle', 'Please complete the required fields',
+      'form.validationDetail', 'Check the highlighted field and try again.');
     return;
   }
 
@@ -202,10 +234,11 @@ form.addEventListener('submit', async event => {
 
   const originalButtonText = submitButton.textContent;
   submitButton.disabled = true;
-  submitButton.textContent = 'Enviando...';
+  submitButton.textContent = t('form.sending', 'Sending your request...');
   photoStatus.classList.remove('error', 'success');
   photoStatus.classList.add('sending');
-  photoStatus.innerHTML = '<strong>Enviando solicitud.</strong><span>Espera un momento mientras enviamos los detalles del proyecto.</span>';
+  statusMessage('form.sendingTitle', 'Sending request',
+    'form.sendingDetail', 'Please wait while we send your project details.');
 
   try {
     const response = await fetch(form.getAttribute('action') || '/api/contact', {
@@ -224,11 +257,13 @@ form.addEventListener('submit', async event => {
     resetPhotoUploadCopy();
     photoStatus.classList.remove('sending', 'error');
     photoStatus.classList.add('success');
-    photoStatus.innerHTML = '<strong>Solicitud enviada correctamente.</strong><span>Recibimos tu solicitud y te responderemos en 1-2 días hábiles.</span>';
+    statusMessage('form.successTitle', 'Request sent successfully',
+      'form.successDetail', 'We received your quote request and will reply within 1-2 business days.');
   } catch (error) {
     photoStatus.classList.remove('sending', 'success');
     photoStatus.classList.add('error');
-    photoStatus.innerHTML = '<strong>No se pudo enviar.</strong><span>Por favor llama o envía mensaje al (708) 983-8587.</span>';
+    statusMessage('form.errorTitle', 'Request not sent',
+      'form.errorDetail', 'Please call or text (708) 983-8587 and we will help you directly.');
   } finally {
     submitButton.disabled = false;
     submitButton.textContent = originalButtonText;
