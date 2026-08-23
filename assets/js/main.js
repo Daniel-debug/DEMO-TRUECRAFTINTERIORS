@@ -167,6 +167,11 @@ const tName = document.getElementById('tName');
 const tJob = document.getElementById('tJob');
 const dots = document.querySelectorAll('#tDots button');
 const tCard = document.getElementById('tCard');
+// Cada cuanto avanza la tarjeta de resena por si sola.
+// Las resenas tardan entre 4.8 y 8.2 s en leerse, asi que 5000 es el punto
+// donde el movimiento se nota sin cortar del todo la lectura. Si se agregan
+// resenas mas largas, conviene subirlo.
+const reviewIntervalMs = 5000;
 let reviewTimer;
 let reviewStartX = 0;
 let reviewDeltaX = 0;
@@ -237,7 +242,14 @@ function animateTestimonialChange(nextIndex, direction = 1) {
 
 function restartReviewTimer() {
   window.clearInterval(reviewTimer);
-  reviewTimer = window.setInterval(() => animateTestimonialChange(tIndex + 1, 1), 6500);
+  reviewTimer = window.setInterval(() => {
+    // Si el visitante esta arrastrando la tarjeta, se salta este turno en vez
+    // de cancelar el temporizador. Antes se hacia clearInterval en pointerdown
+    // y si el gesto terminaba en scroll no llegaba pointerup ni pointercancel,
+    // el temporizador quedaba muerto y la rotacion automatica no volvia.
+    if (reviewDragging || reviewAnimating) return;
+    animateTestimonialChange(tIndex + 1, 1);
+  }, reviewIntervalMs);
 }
 
 function goToTestimonial(index, direction) {
@@ -257,7 +269,6 @@ if (tCard) {
     reviewStartX = event.clientX;
     reviewDeltaX = 0;
     reviewDragging = true;
-    window.clearInterval(reviewTimer);
     tCard.classList.add('is-dragging');
     setReviewDragVisuals(0);
     tCard.setPointerCapture(event.pointerId);
