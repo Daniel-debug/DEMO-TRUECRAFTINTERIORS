@@ -1,6 +1,13 @@
 const MAX_PHOTOS = 3;
 const MAX_PHOTO_BYTES = 8 * 1024 * 1024;
-const ALLOWED_PHOTO_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
+// Se acepta cualquier imagen. Un iPhone en "Alta eficiencia" sube image/heic,
+// que Cloudinary convierte sin problema. Si el navegador no informa el tipo,
+// se valida por extension.
+const PHOTO_EXTENSION_PATTERN = /\.(jpe?g|png|webp|heic|heif|avif|gif|bmp|tiff?|jfif|dng)$/i;
+function isPhotoFile(file) {
+  if (file.type) return /^image\//i.test(file.type);
+  return PHOTO_EXTENSION_PATTERN.test(file.name || '');
+}
 const DEFAULT_CLOUDINARY_FOLDER = 'quote-requests/true-craft-interiors';
 const BRAND_NAME = 'True Craft Interiors';
 const SITE_URL = 'https://truecraftinteriorschicago.com';
@@ -59,7 +66,7 @@ function getPhotos(formData) {
 function validatePhotos(photos) {
   if (photos.length > MAX_PHOTOS) return 'Please upload no more than 3 photos.';
   if (photos.some(file => file.size > MAX_PHOTO_BYTES)) return 'Each photo must be 8 MB or smaller.';
-  if (photos.some(file => !ALLOWED_PHOTO_TYPES.has(file.type))) return 'Only JPG, PNG and WebP images are accepted.';
+  if (photos.some(file => !isPhotoFile(file))) return 'Only image files are accepted.';
   return '';
 }
 

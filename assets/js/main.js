@@ -388,7 +388,15 @@ const photoUploadTitle = photoUpload?.querySelector('.photo-upload-copy strong')
 const photoUploadHint = photoUpload?.querySelector('.photo-upload-copy small');
 const photoList = document.createElement('div');
 const maxPhotoBytes = 8 * 1024 * 1024;
-const allowedPhotoTypes = ['image/jpeg', 'image/png', 'image/webp'];
+// Se acepta cualquier imagen que el dispositivo reporte como image/*.
+// Los iPhone en "Alta eficiencia" entregan image/heic, que antes se rechazaba.
+// Cuando el navegador no informa el tipo (pasa en algunos Android y en Windows)
+// se cae al respaldo por extension.
+const photoExtensionPattern = /\.(jpe?g|png|webp|heic|heif|avif|gif|bmp|tiff?|jfif|dng)$/i;
+function isPhotoFile(file) {
+  if (file.type) return /^image\//i.test(file.type);
+  return photoExtensionPattern.test(file.name || '');
+}
 let selectedPhotoFiles = [];
 const fieldLabelKeys = {
   name: 'form.name',
@@ -587,11 +595,11 @@ function setFormNote(type, title, detail) {
 function validatePhotos() {
   const files = Array.from(projectPhotos.files || []);
   const oversized = files.some(file => file.size > maxPhotoBytes);
-  const invalidType = files.some(file => !allowedPhotoTypes.includes(file.type));
+  const invalidType = files.some(file => !isPhotoFile(file));
   let message = '';
   if (files.length > 3) message = formText('form.photoCountError', 'Please choose no more than 3 photos.');
   else if (oversized) message = formText('form.photoSizeError', 'Each photo must be 8 MB or smaller.');
-  else if (invalidType) message = formText('form.photoTypeError', 'Only JPG, PNG and WebP images are accepted.');
+  else if (invalidType) message = formText('form.photoTypeError', 'Only image files are accepted.');
   projectPhotos.setCustomValidity(message);
   photoStatus.textContent = message || (files.length ? formText('form.photoAttachNote', 'Photos will be attached when you send the request.') : '');
   photoStatus.classList.toggle('error', Boolean(message));

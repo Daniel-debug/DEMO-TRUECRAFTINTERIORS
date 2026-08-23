@@ -103,7 +103,7 @@
           <div class="field">
             <label for="photos">Photos (optional)</label>
             <div class="photo-upload">
-              <input id="photos" name="project_photos[]" type="file" accept="image/jpeg,image/png,image/webp" multiple>
+              <input id="photos" name="project_photos[]" type="file" accept="image/*" multiple>
               <label class="photo-upload-label" for="photos">
                 <span class="photo-upload-icon" aria-hidden="true">+</span>
                 <span class="photo-upload-copy">
@@ -112,7 +112,7 @@
                 </span>
               </label>
             </div>
-            <small id="photoStatus">Up to 3 photos. Maximum 8 MB each. JPG, PNG or WebP.</small>
+            <small id="photoStatus">Up to 3 photos, 8 MB each. Any photo format, including iPhone HEIC.</small>
           </div>
           <label class="check">
             <input type="checkbox" name="contact_consent" value="yes" required>
