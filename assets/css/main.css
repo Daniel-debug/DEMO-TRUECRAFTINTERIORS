@@ -879,6 +879,13 @@ section {
   margin: 10px 0 4px;
 }
 
+/* titulo e intro de la columna izquierda de resenas: el resto de las
+   secciones usa .section-head, esta columna es una reticula aparte */
+.t-title {
+  font-size: clamp(2rem, 3.6vw, 2.9rem);
+  margin-top: 4px;
+}
+
 .t-card {
   --review-drag-progress: 0;
   --review-drag-direction: 0;
@@ -2803,4 +2810,491 @@ header {
   font-size: 1.8rem;
   line-height: 1;
   color: var(--paper);
+}
+
+/* =========================================================
+   HERO C - EDITORIAL + SLIDESHOW
+   Rediseno del hero aprobado el 2026-08-24. Reemplaza al hero
+   de placas dibujadas en CSS (.hero / .hero-grid / .panel-art).
+
+   Las reglas del hero anterior siguen mas arriba en este archivo
+   a proposito: index.html ya no las usa, pero dejarlas intactas
+   hace que volver atras sea cambiar solo el bloque HTML.
+
+   La franja de confianza (.trust) tambien salio de index.html:
+   el ticker de servicios de este hero ocupa su lugar.
+   ========================================================= */
+
+.hero-c {
+  position: relative;
+  overflow: hidden;
+  /* anula el padding:88px 0 de la regla section */
+  padding: 0;
+  min-height: 640px;
+  display: flex;
+  flex-direction: column;
+  background: var(--charcoal);
+  color: var(--paper);
+  isolation: isolate;
+}
+
+/* ---------- fondo: slideshow de 3 fotos, 4 s cada una ---------- */
+.hero-c .hero-c-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: #0d0d0d;
+}
+
+.hero-c .hero-c-bg img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 55%;
+  opacity: 0;
+  will-change: opacity, transform;
+  animation: heroCSlide 12s ease-in-out infinite;
+}
+
+/* el turno lo da la posicion... */
+.hero-c .hero-c-bg img:nth-child(1) {
+  animation-delay: -0.5s;
+}
+
+.hero-c .hero-c-bg img:nth-child(2) {
+  animation-delay: 3.5s;
+}
+
+.hero-c .hero-c-bg img:nth-child(3) {
+  animation-delay: 7.5s;
+}
+
+/* ...y el revelado de cada foto viaja con la foto, no con su turno,
+   para poder reordenarlas moviendo solo las tres etiquetas img */
+.hero-c .hero-c-bg img.shot-commercial {
+  object-position: 50% 50%;
+  filter: grayscale(0.18) saturate(1.3) contrast(1.06) brightness(1.2);
+}
+
+.hero-c .hero-c-bg img.shot-coffered {
+  filter: grayscale(0.22) saturate(1.18) contrast(1.08) brightness(1.16);
+}
+
+.hero-c .hero-c-bg img.shot-vaulted {
+  object-position: 50% 40%;
+  filter: grayscale(0.2) saturate(1.22) contrast(1.14) brightness(1.28);
+}
+
+@keyframes heroCSlide {
+  0% {
+    opacity: 0;
+    transform: scale(1.035);
+  }
+
+  4.17% {
+    opacity: 1;
+  }
+
+  33.33% {
+    opacity: 1;
+  }
+
+  37.5% {
+    opacity: 0;
+    transform: scale(1.09);
+  }
+
+  40% {
+    opacity: 0;
+    transform: scale(1.035);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(1.035);
+  }
+}
+
+/* ---------- indicador de la foto en turno ---------- */
+.hero-c .hero-c-dots {
+  position: absolute;
+  z-index: 6;
+  top: 22px;
+  right: 28px;
+  display: flex;
+  gap: 7px;
+}
+
+.hero-c .hero-c-dots i {
+  display: block;
+  width: 26px;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.26);
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-c .hero-c-dots i::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--orange);
+  transform: scaleX(0);
+  transform-origin: left;
+  animation: heroCDot 12s linear infinite;
+}
+
+.hero-c .hero-c-dots i:nth-child(1)::after {
+  animation-delay: -0.5s;
+}
+
+.hero-c .hero-c-dots i:nth-child(2)::after {
+  animation-delay: 3.5s;
+}
+
+.hero-c .hero-c-dots i:nth-child(3)::after {
+  animation-delay: 7.5s;
+}
+
+@keyframes heroCDot {
+  0% {
+    transform: scaleX(0);
+  }
+
+  33.33% {
+    transform: scaleX(1);
+  }
+
+  33.4% {
+    transform: scaleX(0);
+  }
+
+  100% {
+    transform: scaleX(0);
+  }
+}
+
+/* ---------- capas sobre la foto ---------- */
+.hero-c .hero-c-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    linear-gradient(180deg, rgba(12, 12, 12, 0.60) 0%, rgba(12, 12, 12, 0.14) 42%, rgba(12, 12, 12, 0.84) 100%),
+    linear-gradient(90deg, rgba(18, 18, 18, 0.56) 0%, rgba(18, 18, 18, 0.08) 50%, rgba(18, 18, 18, 0.34) 78%, rgba(217, 86, 11, 0.2) 100%);
+}
+
+/* reticula de 12 columnas, la misma que ordena el resto de la pagina */
+.hero-c .hero-c-rule {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  background-image: linear-gradient(90deg, rgba(255, 255, 255, 0.10) 1px, transparent 1px);
+  background-size: calc(100% / 12) 100%;
+}
+
+/* el .grain global se mezcla en overlay; sobre foto oscura se pierde */
+.hero-c .grain {
+  z-index: 3;
+  opacity: 0.055;
+  mix-blend-mode: normal;
+}
+
+/* ---------- contenido ---------- */
+.hero-c .hero-c-mid {
+  position: relative;
+  z-index: 5;
+  flex: 1;
+  max-width: var(--maxw);
+  width: 100%;
+  margin: 0 auto;
+  padding: 74px 28px 40px;
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 4fr);
+  gap: 40px;
+  align-items: end;
+}
+
+.hero-c .hero-c-mid > * {
+  min-width: 0;
+}
+
+/* el .eyebrow global trae margin-bottom:20px y aqui el aire lo pone el ticker */
+.hero-c .eyebrow {
+  margin-bottom: 0;
+  font-size: 0.73rem;
+  letter-spacing: 0.13em;
+}
+
+.hero-c h1 {
+  font-size: clamp(3rem, 7.2vw, 6.4rem);
+  line-height: 0.86;
+  letter-spacing: -0.005em;
+  color: var(--paper);
+  margin: 22px 0 0;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.5);
+}
+
+.hero-c h1 span {
+  display: block;
+}
+
+.hero-c h1 span.outline {
+  color: transparent;
+  -webkit-text-stroke: 2px rgba(242, 240, 236, 0.9);
+  text-shadow: none;
+}
+
+.hero-c h1 span.accent {
+  color: var(--orange);
+}
+
+.hero-c .hero-c-side {
+  padding-bottom: 10px;
+}
+
+.hero-c .hero-c-side p {
+  font-size: 1rem;
+  color: #DDD9D1;
+  max-width: 38ch;
+  margin-bottom: 22px;
+  /* doble sombra: la cerrada define el borde de la letra sobre foto
+     clara, la abierta separa el bloque del fondo */
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9), 0 2px 20px rgba(0, 0, 0, 0.85);
+}
+
+.hero-c .hero-c-ctas {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* medidas de la maqueta: un poco mas compactos que el .btn del resto
+   del sitio, y con borde para que los dos midan igual de alto */
+.hero-c .hero-c-ctas .btn {
+  padding: 13px 22px;
+  font-size: 0.79rem;
+  letter-spacing: 0.07em;
+  line-height: 1.55;
+  border: 2px solid transparent;
+  /* el .btn global lleva min-width:0 para que encoja en movil; aqui no:
+     si los dos no caben en la columna tienen que apilarse, no comprimirse */
+  min-width: auto;
+}
+
+.hero-c .hero-c-ctas .btn-outline {
+  border-color: #5A5750;
+  color: var(--paper);
+}
+
+.hero-c .hero-c-ctas .btn-outline:hover {
+  background: var(--paper);
+  color: var(--charcoal);
+  border-color: var(--paper);
+}
+
+/* ---------- ticker de servicios ---------- */
+.hero-c .hero-c-ticker {
+  position: relative;
+  z-index: 5;
+  overflow: hidden;
+  margin: 18px 0 4px;
+  width: min(620px, 100%);
+  max-width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(10, 10, 10, 0.62);
+  backdrop-filter: blur(3px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
+  /* las orillas se difuminan para que el texto entre y salga
+     en lugar de cortarse contra el borde */
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 7%, #000 93%, transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0, #000 7%, #000 93%, transparent 100%);
+}
+
+.hero-c .hero-c-ticker-track {
+  display: flex;
+  width: max-content;
+  animation: heroCTicker 34s linear infinite;
+}
+
+/* el segundo juego de servicios es el que cierra el ciclo sin salto */
+.hero-c .hero-c-ticker-track span {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #E3E0D9;
+  padding: 11px 22px;
+  display: inline-flex;
+  align-items: center;
+  gap: 22px;
+  white-space: nowrap;
+}
+
+.hero-c .hero-c-ticker-track span::after {
+  content: "";
+  width: 5px;
+  height: 5px;
+  background: var(--orange);
+  border-radius: 50%;
+}
+
+@keyframes heroCTicker {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* ---------- credenciales ---------- */
+.hero-c .hero-c-cred {
+  position: relative;
+  z-index: 5;
+  max-width: var(--maxw);
+  width: 100%;
+  margin: 0 auto;
+  padding: 22px 28px 30px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 34px;
+  align-items: center;
+}
+
+.hero-c .hero-c-cred .item {
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+}
+
+.hero-c .hero-c-cred .figure {
+  font-family: 'Big Shoulders', sans-serif;
+  font-weight: 800;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: var(--white);
+}
+
+.hero-c .hero-c-cred .label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.66rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #9C9992;
+}
+
+.hero-c .hero-c-cred .promise {
+  margin-left: auto;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #CFCCC4;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 9px 13px;
+}
+
+.hero-c .hero-c-cred .promise b {
+  color: var(--orange);
+}
+
+/* ---------- movil primero: el cliente llega desde el telefono ---------- */
+@media (max-width: 1020px) {
+  .hero-c .hero-c-mid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero-c .hero-c-mid {
+    padding: 44px 20px 28px;
+  }
+
+  .hero-c h1 {
+    margin-top: 18px;
+  }
+
+  .hero-c .hero-c-ticker {
+    margin: 14px 0 2px;
+  }
+
+  .hero-c .hero-c-ticker-track span {
+    padding: 9px 16px;
+    font-size: 0.64rem;
+    gap: 16px;
+  }
+
+  .hero-c .hero-c-ctas {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .hero-c .hero-c-ctas .btn {
+    width: 100%;
+    min-height: 52px;
+    padding: 15px 22px;
+  }
+
+  .hero-c .hero-c-cred {
+    padding: 18px 20px 26px;
+    gap: 14px 20px;
+  }
+
+  .hero-c .hero-c-cred .item {
+    flex: 0 0 calc(50% - 20px);
+  }
+
+  .hero-c .hero-c-cred .promise {
+    margin-left: 0;
+    width: 100%;
+    text-align: center;
+  }
+
+  /* cada foto necesita su propio encuadre en vertical */
+  .hero-c .hero-c-bg img {
+    object-position: 50% 46%;
+  }
+
+  .hero-c .hero-c-bg img.shot-commercial {
+    object-position: 50% 42%;
+  }
+
+  .hero-c .hero-c-bg img.shot-vaulted {
+    object-position: 50% 30%;
+  }
+
+  .hero-c .hero-c-dots {
+    top: 14px;
+    right: 20px;
+    gap: 5px;
+  }
+
+  .hero-c .hero-c-dots i {
+    width: 18px;
+    height: 2px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-c .hero-c-bg img {
+    animation: none;
+    opacity: 0;
+    transform: none;
+  }
+
+  .hero-c .hero-c-bg img:nth-child(1) {
+    opacity: 1;
+  }
+
+  .hero-c .hero-c-dots {
+    display: none;
+  }
+
+  .hero-c .hero-c-ticker-track {
+    animation: none;
+  }
 }

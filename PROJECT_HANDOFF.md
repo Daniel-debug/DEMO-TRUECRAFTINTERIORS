@@ -1,6 +1,6 @@
 # True Craft Interiors - Project Handoff
 
-Last updated: 2026-08-23
+Last updated: 2026-08-24
 
 This document is intended for another developer or AI agent that needs to understand the project quickly without reading the full conversation history.
 
@@ -467,6 +467,69 @@ same design and same features as the English homepage. The other 16 generated pa
 landing pages built on `seo-pages.css`, intentionally simpler, and the homepage navigation does
 not send ordinary visitors into them.
 
+## Homepage Hero
+
+Replaced on 2026-08-24. The client read the previous hero as generic, and pointed at
+`acmedrywall1.com` as the kind of site he expected. The old hero had no photography: the
+drywall panels on the right were `.sheet.s1/.s2/.s3`, rectangles drawn in CSS. Five options were
+built and reviewed on a phone; this is option C.
+
+What the section is now:
+
+```text
+<section class="hero-c" id="top">
+  .hero-c-bg      three photos that cross-fade, 4 s each
+  .hero-c-scrim   two gradients that keep the type readable over the photo
+  .hero-c-rule    12-column grid lines
+  .grain          the site's existing noise texture
+  .hero-c-dots    three bars that fill with the current photo
+  .hero-c-mid     eyebrow, service ticker, poster headline | lead + CTAs
+  .hero-c-cred    25+ / 1 Yr / EN/ES / 100% and the estimate promise
+</section>
+```
+
+The trust marquee (`.trust`) that followed the hero was removed with it: the ticker inside the
+hero carries the same idea, and running both repeated the resource twice in one screen. Its
+`trust.1`-`trust.6` keys are still in the dictionary, unused, in case the strip comes back.
+
+### The photos
+
+```text
+assets/hero/commercial-drywall-window.jpg    shown first
+assets/hero/coffered-ceiling-medallion.jpg
+assets/hero/vaulted-ceiling-beams.jpg
+```
+
+Cropped to 4:3, 1400 px wide, progressive JPEG, 272 KB for all three. Sources are phone
+screenshots from `fotos prospecto/IMAGENES` (`IMG_6940`, `IMG_6941`, `IMG_6936`) with the black
+letterbox bars trimmed.
+
+**Order on screen is the order of the three `<img>` tags.** Each photo carries its own class
+(`shot-commercial`, `shot-coffered`, `shot-vaulted`) holding its brightness, saturation and
+framing, so the tags can be reordered without the tuning of one photo landing on another. The
+`:nth-child` rules only assign the turn (`-0.5s`, `3.5s`, `7.5s` on a 12 s cycle).
+
+To swap a photo, replace the file and check its `object-position` for portrait screens in the
+`max-width: 640px` block. To change the pace, the cycle is `12s` in three places: the two
+`animation` declarations and the three delays, which are the cycle divided into thirds.
+
+### Mobile
+
+The visitor arrives from a phone, so the section was designed at 390 px first: full-width
+buttons 52 px tall, credentials in two columns, and a per-photo `object-position` for the
+portrait crop. The headline is three lines in both languages - the Spanish version is
+`Bien hecho. / Acabado / perfecto.`, not a literal translation of the English, because
+`a la perfección.` wrapped to a fourth line on a phone.
+
+### Reverting
+
+The old `.hero`, `.hero-grid` and `.panel-art` rules were left untouched in `main.css`; only
+`index.html` stopped using them. Restoring the previous hero means restoring the section markup
+and the `.trust` block in `index.html`, regenerating, and changing the audit marker back.
+
+`tools/audit-site.ps1` looks for `class="hero-c"` in both homepages, where it used to look for
+`class="hero-grid"`.
+
 ## How To Change Text
 
 ### Step 0 - decide which file owns the text
@@ -513,7 +576,17 @@ values are also in `index.html` as `#tQuote`, `#tName`, `#tWho`, `#tJob`.
 powershell -ExecutionPolicy Bypass -File tools\generate-seo-pages.ps1
 ```
 
-Expected output: `157 textos traducidos` and `31/31 cadenas de atributos`. A lower count or any
+**`generate-seo-pages.ps1` must keep its UTF-8 BOM.** The script holds Spanish literals
+(`Instalación`, `bilingüe`, the `$spanishAttributeOverrides` table). Windows PowerShell 5.1
+reads a BOM-less `.ps1` as Windows-1252, so those literals decode wrong and the script writes
+`InstalaciÃ³n` into every Spanish page it generates - `es/index.html` and the eight Spanish SEO
+pages. The BOM was added on 2026-08-24 after exactly that happened. Running with `pwsh`
+(PowerShell 7) hides the problem, because 7 assumes UTF-8; the BOM makes both hosts correct.
+
+If mojibake shows up anyway, do not hand-fix the HTML: check the script's encoding first,
+then regenerate.
+
+Expected output: `156 textos traducidos` and `31/31 cadenas de atributos`. A lower count or any
 `WARNING` means a key or an override string went stale - fix it before committing.
 
 Attribute strings (`aria-label`, `alt`, gallery captions) additionally need their entry in
@@ -533,7 +606,9 @@ switcher in both directions.
 ### Step 6 - review the diff before committing
 
 A homepage text change should touch exactly three files: `index.html`,
-`assets/js/translations.js` and `es/index.html`. Any other generated page showing up in
+`assets/js/translations.js` and `es/index.html`. A change to the hero's structure, not just its
+text, also touches `assets/css/main.css` and, if the required markers move,
+`tools/audit-site.ps1`. Any other generated page showing up in
 `git status` means something changed that was not intended.
 
 ### The mistake that costs the most

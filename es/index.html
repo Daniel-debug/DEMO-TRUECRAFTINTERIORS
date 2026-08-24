@@ -141,75 +141,76 @@
   </div>
 
   <!-- ================= HERO ================= -->
-  <section class="hero" id="top">
-    <div class="grain"></div>
-    <div class="hero-grid">
-      <span class="eyebrow hero-eyebrow-mobile" data-i18n="hero.eyebrow">Chicagoland &middot; Residencial y Comercial</span>
-      <div class="hero-copy">
-        <span class="eyebrow hero-eyebrow-desktop" data-i18n="hero.eyebrow">Chicagoland &middot; Residencial y Comercial</span>
-        <h1 data-i18n="hero.h1">Construido correctamente.<br><em>Terminado<br>a la perfección.</em></h1>
-        <p class="lead" data-i18n="hero.lead">Drywall, cinta, reparación, framing, pintura e instalación de FRP con raíces familiares. Áreas limpias, materiales de calidad, entregas puntuales y garantía de 1 año en mano de obra.</p>
-        <div class="hero-ctas">
-          <a href="#contacto" class="btn btn-primary" data-i18n="hero.ctaQuote">Cotización Gratis</a>
-          <a href="tel:17089838587" class="btn btn-outline" style="border-color:#5A5750;color:var(--paper);"
-            data-i18n="hero.ctaCall">Llamar (708) 983-8587</a>
+  <section class="hero-c" id="top">
+    <!-- slideshow: 3 fotos, 4 s cada una. El orden de estas tres
+         etiquetas es el orden en pantalla; el ajuste de cada foto va
+         en su clase, asi que reordenarlas no descuadra nada. -->
+    <div class="hero-c-bg" aria-hidden="true">
+      <img class="shot-commercial" src="/assets/hero/commercial-drywall-window.jpg" width="1400" height="1050"
+        fetchpriority="high" alt="">
+      <img class="shot-coffered" src="/assets/hero/coffered-ceiling-medallion.jpg" width="1400" height="1050" alt="">
+      <img class="shot-vaulted" src="/assets/hero/vaulted-ceiling-beams.jpg" width="1400" height="1050" alt="">
+    </div>
+    <div class="hero-c-scrim" aria-hidden="true"></div>
+    <div class="hero-c-rule" aria-hidden="true"></div>
+    <div class="grain" aria-hidden="true"></div>
+    <div class="hero-c-dots" aria-hidden="true"><i></i><i></i><i></i></div>
+
+    <div class="hero-c-mid">
+      <div>
+        <span class="eyebrow" data-i18n="hero.eyebrow">Chicagoland &middot; Residencial y Comercial</span>
+
+        <!-- los servicios ya se listan en #servicios: aqui son ambiente -->
+        <div class="hero-c-ticker" aria-hidden="true">
+          <div class="hero-c-ticker-track">
+            <span data-i18n="services.t1">Instalación de Drywall</span>
+            <span data-i18n="services.t2">Cinta y Acabado</span>
+            <span data-i18n="services.t3">Reparación de Drywall</span>
+            <span data-i18n="services.t4">Framing</span>
+            <span data-i18n="services.t5">Pintura</span>
+            <span data-i18n="services.t6">Instalación de FRP</span>
+            <!-- segundo juego: es lo que cierra el ciclo sin salto -->
+            <span data-i18n="services.t1">Instalación de Drywall</span>
+            <span data-i18n="services.t2">Cinta y Acabado</span>
+            <span data-i18n="services.t3">Reparación de Drywall</span>
+            <span data-i18n="services.t4">Framing</span>
+            <span data-i18n="services.t5">Pintura</span>
+            <span data-i18n="services.t6">Instalación de FRP</span>
+          </div>
         </div>
-        <div class="stat-strip">
-          <div>
-            <div class="num" data-count="25" data-suffix="+">0</div>
-            <div class="cap" data-i18n="hero.stat1">Años de Experiencia</div>
-          </div>
-          <div>
-            <div class="num" data-i18n="hero.stat2num">1 Año</div>
-            <div class="cap" data-i18n="hero.stat2">Garantía</div>
-          </div>
-          <div>
-            <div class="num">EN/ES</div>
-            <div class="cap" data-i18n="hero.stat3">Equipo Bilingüe</div>
-          </div>
-          <div>
-            <div class="num" data-count="100" data-suffix="%">0</div>
-            <div class="cap" data-i18n="hero.stat4">Asegurado</div>
-          </div>
-        </div>
+
+        <h1 data-i18n="heroc.h1"><span>Bien hecho.</span><span class="outline">Acabado</span><span class="accent">perfecto.</span></h1>
       </div>
 
-      <div class="panel-art" aria-hidden="true">
-        <div class="sheet s3"></div>
-        <div class="sheet s1">
-          <div class="seamline"></div>
+      <div class="hero-c-side">
+        <p data-i18n="heroc.lead">Drywall, cinta, reparación, framing, pintura e instalación de FRP &mdash; con un equipo familiar que creció en obras de Chicago. Áreas de trabajo limpias. Entregas puntuales. Garantía de 1 año en mano de obra.</p>
+        <div class="hero-c-ctas">
+          <a href="#contacto" class="btn btn-primary" data-i18n="hero.ctaQuote">Cotización Gratis</a>
+          <a href="tel:17089838587" class="btn btn-outline" data-i18n="hero.ctaCall">Llamar (708) 983-8587</a>
         </div>
-        <div class="sheet s2">
-          <div class="seamline"></div>
-        </div>
-        <div class="tape-badge" data-i18n="hero.badge">Construido correctamente. Terminado a la perfección.</div>
       </div>
+    </div>
+
+    <div class="hero-c-cred">
+      <div class="item">
+        <span class="figure">25+</span>
+        <span class="label" data-i18n="heroc.cred1">Años de<br>Experiencia</span>
+      </div>
+      <div class="item">
+        <span class="figure" data-i18n="hero.stat2num">1 Año</span>
+        <span class="label" data-i18n="heroc.cred2">Garantía en<br>mano de obra</span>
+      </div>
+      <div class="item">
+        <span class="figure">EN/ES</span>
+        <span class="label" data-i18n="heroc.cred3">Equipo<br>Bilingüe</span>
+      </div>
+      <div class="item">
+        <span class="figure">100%</span>
+        <span class="label" data-i18n="heroc.cred4">Licenciados<br>y asegurados</span>
+      </div>
+      <span class="promise" data-i18n="heroc.promise">Estimados gratis en <b>1&ndash;2 días hábiles</b></span>
     </div>
   </section>
-
-  <div class="seam on-dark" aria-hidden="true"></div>
-
-  <!-- ================= TRUST STRIP ================= -->
-  <div class="trust">
-    <div class="marquee" aria-hidden="false">
-      <div class="trust-item"><span class="dot"></span><span data-i18n="trust.1">Sirviendo Chicagoland desde 2010</span>
-      </div>
-      <div class="trust-item"><span class="dot"></span><span data-i18n="trust.2">Cotizaciones gratis en 1&ndash;2 días hábiles</span></div>
-      <div class="trust-item"><span class="dot"></span><span data-i18n="trust.3">Disponibles como subcontratistas para remodelaciones</span></div>
-      <div class="trust-item"><span class="dot"></span><span data-i18n="trust.4">Licenciados y totalmente asegurados</span>
-      </div>
-      <div class="trust-item"><span class="dot"></span><span data-i18n="trust.5">Equipos bilingües, inglés y español</span></div>
-      <div class="trust-item"><span class="dot"></span><span data-i18n="trust.6">Garantía de 1 año en mano de obra</span>
-      </div>
-      <!-- duplicated set for seamless loop -->
-      <div class="trust-item" aria-hidden="true"><span class="dot"></span><span data-i18n="trust.1">Sirviendo Chicagoland desde 2010</span></div>
-      <div class="trust-item" aria-hidden="true"><span class="dot"></span><span data-i18n="trust.2">Cotizaciones gratis en 1&ndash;2 días hábiles</span></div>
-      <div class="trust-item" aria-hidden="true"><span class="dot"></span><span data-i18n="trust.3">Disponibles como subcontratistas para remodelaciones</span></div>
-      <div class="trust-item" aria-hidden="true"><span class="dot"></span><span data-i18n="trust.4">Licenciados y totalmente asegurados</span></div>
-      <div class="trust-item" aria-hidden="true"><span class="dot"></span><span data-i18n="trust.5">Equipos bilingües, inglés y español</span></div>
-      <div class="trust-item" aria-hidden="true"><span class="dot"></span><span data-i18n="trust.6">Garantía de 1 año en mano de obra</span></div>
-    </div>
-  </div>
 
   <!-- ================= ABOUT ================= -->
   <section id="nosotros">
@@ -478,6 +479,7 @@
       <div class="t-wrap">
         <div class="reveal">
           <span class="eyebrow" style="color:var(--orange-dark);" data-i18n="reviews.eyebrow">Reseñas</span>
+          <h2 class="t-title" data-i18n="reviews.h2">Lo que dicen los clientes</h2>
           <div class="stars" aria-hidden="true">★★★★★</div>
         </div>
         <div class="reveal">

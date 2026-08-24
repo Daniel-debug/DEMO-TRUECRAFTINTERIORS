@@ -100,7 +100,7 @@ if (-not (Test-Path -LiteralPath $sitemapPath)) {
 
 $englishHome = [IO.File]::ReadAllText((Join-Path $siteRoot 'index.html'))
 $spanishHome = [IO.File]::ReadAllText((Join-Path $siteRoot 'es\index.html'))
-$requiredHomeMarkers = @('class="hero-grid"', 'id="servicios"', 'id="galeria"', 'id="testimonios"', 'id="contacto"', 'id="quoteForm"')
+$requiredHomeMarkers = @('class="hero-c"', 'id="servicios"', 'id="galeria"', 'id="testimonios"', 'id="contacto"', 'id="quoteForm"')
 foreach ($marker in $requiredHomeMarkers) {
   if (-not $englishHome.Contains($marker)) { $issues.Add("English homepage is missing '$marker'") }
   if (-not $spanishHome.Contains($marker)) { $issues.Add("Spanish homepage is missing '$marker'") }
