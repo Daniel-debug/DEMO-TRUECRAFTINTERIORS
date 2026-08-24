@@ -1,6 +1,6 @@
 # True Craft Interiors - Business and Content Context
 
-Last updated: 2026-08-23
+Last updated: 2026-08-24
 
 This document summarizes the business context, content direction, and messaging decisions for the True Craft Interiors website.
 
@@ -182,6 +182,46 @@ Photo upload rules:
 - Maximum 8 MB each.
 - Accepted formats: JPG, PNG, WebP.
 
+## Homepage Hero
+
+Rebuilt on 2026-08-24. The client said the site read as generic and pointed at
+`acmedrywall1.com`. The honest diagnosis was that the first screen had no photography at all:
+the drywall panels on the right were rectangles drawn in CSS. Five directions were built and
+reviewed on a phone; the chosen one is a slideshow of three real project photos.
+
+What the first screen says now:
+
+```text
+eyebrow     Chicagoland · Residential & Commercial
+ticker      the six services, scrolling
+headline    Built right. / Finished / perfectly.
+lead        Drywall, taping, repair, framing, painting and FRP - installed by a family
+            crew that grew up on Chicago job sites. Clean work areas. Prompt finishes.
+            A 1-year workmanship warranty.
+CTAs        Get a Free Quote · Call (708) 983-8587
+credentials 25+ Years Experience · 1 Yr Workmanship Warranty · EN/ES Bilingual Crew ·
+            100% Licensed & Insured · Free estimates in 1-2 business days
+```
+
+The Spanish headline is **not** a literal translation. `Bien hecho. / Acabado / perfecto.`
+was chosen over "Terminado a la perfección" because the literal version wrapped to a fourth
+line on a phone. Same idea, same rhythm, three lines in both languages.
+
+The photos are the client's own job-site pictures, in this order: a commercial space with
+taped walls and a window, a coffered ceiling with a circular medallion, and a vaulted ceiling
+with converging beams. They are lightly desaturated rather than black and white - the client
+asked to see the color of the wood and the materials.
+
+The trust marquee that used to sit under the hero was removed: the ticker inside the hero
+carries the same six services, and running both repeated the resource twice in one screen. If
+that copy is wanted again ("Serving Chicagoland since 2010", "Free quotes within 1-2 business
+days", "Subcontracting available for remodelers", "Licensed & fully insured", "Bilingual crews",
+"1-year workmanship warranty"), the keys `trust.1`-`trust.6` are still in the dictionary.
+
+Naming note: the ticker, the services section and the footer all pull from `services.t1`-`t6`,
+and `t4` reads "Framing" while the service page calls it "Interior Framing". Worth deciding on
+one name.
+
 ## Gallery Direction
 
 The project gallery should use real construction/project images.
@@ -205,6 +245,12 @@ Recommended quantity:
 Too many images can make the homepage feel heavy, especially on mobile.
 
 ## Reviews Section
+
+The section carries a heading since 2026-08-24: "What clients say" / "Lo que dicen los
+clientes". It was the only section on the page without one, and the left column looked
+unfinished with just the word "Reviews" and five stars. A supporting line was drafted
+("real reviews... each one shown with a photo of that project") and dropped: the client
+wanted the title alone.
 
 The three reviews on the homepage are **real client reviews**, confirmed by the business owner
 on 2026-08-23. They are published using client initials plus area (J.R. / A.C. / M.P.), which is

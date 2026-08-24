@@ -410,6 +410,13 @@ Behavior:
 
 ### Reviews
 
+The section got a heading on 2026-08-24 (`reviews.h2`, "What clients say" /
+"Lo que dicen los clientes"). It was the only section on the page without one: every other
+one uses `.section-head` with an eyebrow plus an `h2`, and the left column here showed only
+the word "Reviews" and the five stars. The heading is styled by `.t-title` because this
+column is its own grid, not a `.section-head`. A supporting paragraph was drafted and then
+dropped: the client wanted the title alone.
+
 The three homepage reviews are real client reviews, confirmed by the business owner on
 2026-08-23. The previous "Preview" labels, the visible warning note, and the ASCII asterisk
 rating were removed on that date. Review text lives in `TESTIMONIALS_I18N` in
@@ -438,7 +445,7 @@ The videos are hosted externally through Cloudinary and displayed in a custom-st
 
 ## Which Files Are Generated
 
-This matters before editing anything. Of the 19 pages, **17 are generated** by
+This matters before editing anything. Of the 20 pages, **17 are generated** by
 `tools/generate-seo-pages.ps1`. Editing a generated file appears to work and is silently lost
 the next time the script runs.
 
@@ -513,6 +520,38 @@ To swap a photo, replace the file and check its `object-position` for portrait s
 `max-width: 640px` block. To change the pace, the cycle is `12s` in three places: the two
 `animation` declarations and the three delays, which are the cycle divided into thirds.
 
+### Its dictionary keys
+
+```text
+heroc.h1        the three-line headline, with its span markup
+heroc.lead      the paragraph on the right
+heroc.cred1..4  the four credential labels, each with a <br>
+heroc.promise   "Free estimates in 1-2 business days"
+```
+
+Everything else in the section reuses keys that already existed: `hero.eyebrow`,
+`hero.ctaQuote`, `hero.ctaCall`, `hero.stat2num` and `services.t1`-`t6` for the ticker. The
+ticker holds two identical sets of those six because the marquee animation shifts the track
+`-50%` and restarts; a service added to only one set makes the loop jump.
+
+`hero.h1`, `hero.lead`, `hero.badge` and `hero.stat1`-`stat4` are now unused. They were left in
+the dictionary so restoring the old hero does not mean rewriting them.
+
+### Reusing the site's classes: three things that bit
+
+The section is built on the site's own `.eyebrow` and `.btn` instead of new classes, which is
+the right call, but three of their values had to be overridden inside `.hero-c` to match the
+approved mockup:
+
+```text
+.eyebrow   margin-bottom: 20px   pushed the whole column down 20 px
+.btn       line-height: 1.15     buttons 5 px shorter than the mockup
+.btn       min-width: 0          buttons squeezed onto one line instead of stacking
+```
+
+The `min-width: 0` is there so buttons shrink on mobile elsewhere on the page; inside the hero
+the two CTAs should stack instead, so it is restored to `auto` there.
+
 ### Mobile
 
 The visitor arrives from a phone, so the section was designed at 390 px first: full-width
@@ -586,7 +625,7 @@ pages. The BOM was added on 2026-08-24 after exactly that happened. Running with
 If mojibake shows up anyway, do not hand-fix the HTML: check the script's encoding first,
 then regenerate.
 
-Expected output: `156 textos traducidos` and `31/31 cadenas de atributos`. A lower count or any
+Expected output: `157 textos traducidos` and `31/31 cadenas de atributos`. A lower count or any
 `WARNING` means a key or an override string went stale - fix it before committing.
 
 Attribute strings (`aria-label`, `alt`, gallery captions) additionally need their entry in
@@ -705,8 +744,10 @@ Maintenance rules:
   matching entry to `$spanishAttributeOverrides`. The script prints
   `NN/NN cadenas de atributos traducidas` and warns for every string it could not find, so a
   count below the total means an override went stale.
-- The script rewrites all 19 pages. Re-running it with no source changes reproduces the other
-  18 byte for byte, so `git status` after a run should only ever show `es/index.html`.
+- The script rewrites all 19 generated pages. Re-running it with no source changes reproduces
+  the other 18 byte for byte, so `git status` after a run should only ever show `es/index.html`.
+  `tools/audit-site.ps1` currently reports 20 routes and 21 HTML files (the 20 `index.html`
+  routes plus `404.html`).
 - Known remaining English: the JSON-LD block on `/es/` (business description and service names
   in `Offer` entries). Structured data in English is acceptable, but it can be added to the
   override list if the client wants it localized.
@@ -815,8 +856,20 @@ They can be removed with `git rm` once confirmed they are not planned for future
    instead of `/#contacto`. Neither quote page is linked from its own homepage; both are reached
    from the SEO pages and from search.
 
+5. **`services.t4` says "Framing", the service is called "Interior Framing".** That key names
+   the service in three places at once - the hero ticker, the services section and the footer -
+   while the service page, the sitemap and `$services` in the generator all say "Interior
+   Framing" / "Framing Interior". It is the only one of the six that is abbreviated. Changing
+   the key fixes all three places at once; it was left alone pending the client's preference.
+
+6. **The hero photos ship as JPEG only.** `<picture>` with WebP and an 800 px variant for phones
+   is the obvious next step: the three files are 272 KB and they load above the fold, on the
+   connection of someone standing on a job site.
+
 ## Important Implementation Cautions
 
+- `tools/generate-seo-pages.ps1` must keep its UTF-8 BOM. Without it, Windows PowerShell 5.1
+  reads its Spanish literals as Windows-1252 and writes mojibake into every Spanish page.
 - Do not expose Resend or Cloudinary secrets in frontend JavaScript.
 - Do not replace the Cloudflare Worker flow with `mailto`.
 - Keep `/api/contact` as the main form endpoint.
